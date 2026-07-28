@@ -10,6 +10,8 @@
 
 ---
 
+---
+
 # 1. Python language and project structure
 
 ## Core syntax and concepts
@@ -86,6 +88,24 @@ if minimum is None:
 
 Use `is None` rather than `== None`.
 
+
+## Documentation and string conventions
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| String quote style | Single and double quotes are functionally equivalent in Python; consistency matters more than choosing one. | Prefer `'text'`, but `"Rory's result"` avoids escaping. | Secure |
+| Docstring | A string placed first in a module, class or function to document its purpose and public behaviour. | Triple double quotes are conventional. | New |
+| `__doc__` | Attribute containing an object's docstring. | `print(calculate_mean.__doc__)` | New |
+| `help()` | Displays documentation, including available docstrings. | `help(calculate_mean)` | New |
+
+### Docstring example
+
+```python
+def calculate_mean(values):
+    """Return the arithmetic mean of a non-empty sequence."""
+    return sum(values) / len(values)
+```
+
 ---
 
 # 2. Python file and data handling
@@ -135,6 +155,7 @@ if parsed_date.strftime("%Y-%m-%d") != value:
     raise ValueError("Date must use YYYY-MM-DD")
 ```
 
+
 ---
 
 # 3. Python environments, packages, and testing
@@ -180,9 +201,132 @@ def test_invalid_replicate():
         main.validate_replicate("-1")
 ```
 
+
 ---
 
-# 4. Mathematics
+# 4. NumPy and scientific Python
+
+## Arrays and dimensions
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| NumPy | A third-party Python package for efficient numerical computing with multidimensional arrays. | Conventionally imported with `import numpy as np`. | Review |
+| `np.array()` | Creates a NumPy array from a compatible Python sequence. | `results = np.array([[1, 2], [3, 4]])` | Review |
+| Array | A multidimensional, usually homogeneous collection of values. | All values normally share one `dtype`. | Review |
+| Dimension / axis | One direction along an array. A 2D array has row and column axes. | Rows are axis 0; columns are axis 1. | Review |
+| `ndim` | Number of dimensions in an array. | A matrix-like array has `ndim == 2`. | Review |
+| `shape` | Tuple containing the length of each axis. | `(4, 3)` means 4 rows and 3 columns. | Secure |
+| `size` | Total number of elements in an array. | Shape `(4, 3)` has size `12`. | Secure |
+| `dtype` | The data type stored in the array. | Examples: `int64`, `float64`, `bool`. | Review |
+| Homogeneous data | Array elements normally use one common data type. | Assigning Boolean values into an integer array stores them as `1` and `0`. | Review |
+| One-dimensional selection | Selecting one column with an integer index removes that axis and returns a 1D array. | `experiment[:, 0]` has shape `(6,)`. | Review |
+| Dimension-preserving slice | Selecting a column with a slice preserves two dimensions. | `experiment[:, 0:1]` has shape `(6, 1)`. | Review |
+
+## Indexing and slicing
+
+| Syntax | Purpose | Example | Status |
+|---|---|---|---|
+| `array[i]` | Selects an item or row along the first axis. | `results[1]` returns the second row. | Secure |
+| `array[:, j]` | Selects all rows from one column. | `results[:, 2]` returns the third column. | Review |
+| `:` | Slice meaning all entries along an axis. | `results[:, 2]` | Review |
+| `array[a:b]` | Selects values from index `a` up to, but not including, `b`. | `results[1:3]` | Review |
+| `array[:, a:b]` | Selects a range of columns from all rows. | `results[:, 1:]` | Review |
+
+## Aggregation and axes
+
+| Function / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| `array.sum()` | Adds all array elements unless an axis is supplied. | `results.sum()` | Review |
+| `array.mean()` | Calculates the arithmetic mean of all elements unless an axis is supplied. | `results.mean()` | Review |
+| `array.min()` | Returns the minimum value, optionally along an axis. | `results.min(axis=0)` | Review |
+| `array.max()` | Returns the maximum value, optionally along an axis. | `results.max(axis=1)` | Review |
+| `array.std()` | Calculates the standard deviation, optionally along an axis. | `replicates.std()` | Review |
+| `np.argmax()` | Returns the index of the first maximum value along the requested axis or flattened input. | `sample_ids[np.argmax(sample_means)]` | Review |
+| `axis=0` | Reduces down the rows and leaves one result per column. | `results.mean(axis=0)` gives column means. | Review |
+| `axis=1` | Reduces across the columns and leaves one result per row. | `results.mean(axis=1)` gives row means. | Review |
+| Reduction | An operation that combines multiple array values into fewer values. | Sum, mean, minimum and maximum are reductions. | Review |
+| Boolean reduction | Boolean values behave like `1` and `0` in reductions, so `.sum()` counts `True` values. | `(replicates > 60).sum()` | Review |
+
+### Axis memory aid
+
+```python
+results.mean(axis=0)  # removes the row axis -> one value per column
+results.mean(axis=1)  # removes the column axis -> one value per row
+```
+
+## Vectorisation and Boolean selection
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| Vectorisation | Applying an operation to an entire array without explicit Python loops over each element. | `results > 16` | Secure |
+| Element-wise operation | An operation performed independently on each array element. | `results * 2` doubles every element. | Review |
+| Scalar comparison | A comparison between an array and one value is applied to every element. | `results > 16` | Review |
+| Boolean mask | A Boolean array identifying elements that satisfy a condition. | `mask = results > 16` | Secure |
+| Boolean indexing | Uses a Boolean mask to return matching values or rows. | `results[results > 16]` | Secure |
+
+## Assignment, views and copies
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| Shared reference | Two names refer to the same array object, so mutation through either name affects the same data. | `second = results` | Review |
+| `array.copy()` | Creates an independent copy of an array’s data. | `second = results.copy()` | Secure |
+| View | A new array object that may share underlying data with another array. Some NumPy slices create views. | Changing a view may alter the source array. | New |
+| Copy | An array with independent data. Changes do not affect the original. | Produced explicitly with `.copy()`. | Secure |
+
+## Transposition, flattening and reshaping
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| Transpose | Swaps the axes of a 2D array. | `(6, 3)` becomes `(3, 6)`. | Review |
+| `.T` | Shorthand attribute for transposing an array. | `transposed = replicates.T` | Review |
+| `.flatten()` | Returns a flattened one-dimensional copy of an array. | `flat = transposed.flatten()` | Review |
+| `.reshape()` | Returns an array with a new compatible shape without changing the number of elements. | `flat.reshape(3, 6)` | Review |
+| Data order | Flattening reads values in the order of the current array; reshaping must respect that order to reconstruct the intended arrangement. | Flattening a transposed array differs from flattening the original. | Review |
+
+## Broadcasting
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| Broadcasting | Applies operations to arrays of different but compatible shapes without manually copying values. | `(6, 3) + (3,)` | Review |
+| Broadcasting compatibility | Dimensions are compared from right to left; each pair must be equal or one dimension must be `1`. | `(6, 3)` and `(6, 1)` are compatible. | Review |
+| Column-wise broadcasting | A 1D array matching the final dimension is applied across every row. | `(6, 3) + (3,)` | Review |
+| Row-wise broadcasting | A column-shaped array supplies one value per row and broadcasts across columns. | `(6, 3) + (6, 1)` | Review |
+| Broadcasting error | Occurs when corresponding dimensions are neither equal nor `1`. | `(6, 3) + (2,)` fails because `3` and `2` conflict. | Review |
+
+## Combining, sorting and exporting arrays
+
+| Function / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| `np.column_stack()` | Stacks one-dimensional arrays as columns in a new 2D array. | `np.column_stack((ids, means, temperatures))` | New |
+| `np.argsort()` / `.argsort()` | Returns indices that would sort an array; those indices can reorder complete rows. | `summary[summary[:, 1].argsort()]` | Review |
+| `np.savetxt()` | Saves a NumPy array to a text file. | `np.savetxt('summary.csv', data, delimiter=',')` | Review |
+| `fmt` | Controls number formatting in `np.savetxt()` and may specify one format per column. | `fmt=['%.0f', '%.2f']` | Review |
+| `header` | Adds a header line when using `np.savetxt()`. | `header='sample_id,mean'` | Review |
+| `comments` | Controls the prefix NumPy adds to the header. | `comments=''` removes the default `# `. | New |
+| Scientific notation | A compact numeric format such as `1.01e+02`; it changes presentation, not numeric meaning. | The default `np.savetxt()` format commonly uses it. | Review |
+
+## Current NumPy example
+
+```python
+import numpy as np
+
+results = np.array([
+    [12, 15, 18],
+    [10, 14, 20],
+    [13, 17, 19],
+    [11, 16, 21]
+])
+
+mean_all = results.mean()
+mean_rows = results.mean(axis=1)
+mean_columns = results.mean(axis=0)
+mask = results > 16
+matching_values = results[mask]
+```
+
+---
+
+# 5. Mathematics
 
 ## Linear algebra
 
@@ -219,9 +363,10 @@ def test_invalid_replicate():
 | Covariance | Measures whether two variables tend to deviate from their means in the same or opposite directions. | Positive: move together; negative: move oppositely. | Review |
 | Correlation | Standardised covariance, ranging from \(-1\) to \(1\). It is unitless. | \(\rho=\frac{\mathrm{Cov}(X,Y)}{\sigma_X\sigma_Y}\) | Review |
 
+
 ---
 
-# 5. Machine-learning concepts
+# 6. Machine-learning concepts
 
 | Term | Definition | Important distinction / formula | Status |
 |---|---|---|---|
@@ -255,9 +400,10 @@ def test_invalid_replicate():
 - **Precision:** “When the model says positive, how often is it right?”
 - **Recall:** “Of all real positives, how many did the model find?”
 
+
 ---
 
-# 6. Review queue
+# 7. Review queue
 
 These are the current highest-priority glossary items to retrieve without notes:
 
@@ -269,30 +415,26 @@ These are the current highest-priority glossary items to retrieve without notes:
 6. Partial derivatives.
 7. Matrix multiplication arithmetic checks.
 8. Exception scope and return placement in Python.
+9. Integer indexing `(n,)` versus dimension-preserving slicing `(n, 1)`.
+10. Choosing `axis=0` or `axis=1` without trial and error.
+11. Assignment versus NumPy views versus independent copies.
+12. The right-to-left broadcasting rule.
+13. Combining multiple Boolean conditions with `&` and parentheses.
+14. Preserving intended element order through transpose, flatten and reshape.
+15. Sorting rows in ascending and descending order with `argsort()`.
 
 ---
 
-# 7. Update format for future sessions
+# Maintenance rules
 
-After each session, add entries using this template:
+This file is a subject-organised reference, not a session history.
 
-```markdown
-## New terms — YYYY-MM-DD
+After each study session:
 
-### Definitions
-
-| Term | Definition | Example / formula | Status |
-|---|---|---|---|
-| ... | ... | ... | New |
-
-### Python functions and syntax
-
-| Function / syntax | Purpose | Minimal example | Status |
-|---|---|---|---|
-| ... | ... | ... | New |
-
-### Status changes
-
-- `term`: New → Review
-- `term`: Review → Secure
-```
+1. Insert new terms into the most relevant existing section.
+2. Update existing definitions and confidence statuses in place.
+3. Remove duplicates rather than recording the same concept twice.
+4. Create a new top-level section only when the material introduces a genuinely new subject area.
+5. Renumber and reorder sections so the document remains logically organised.
+6. Keep the consolidated review queue at the end.
+7. Record chronological progress, mistakes and AI interventions only in `ai_log.md`.
