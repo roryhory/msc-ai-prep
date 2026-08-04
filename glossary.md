@@ -10,8 +10,6 @@
 
 ---
 
----
-
 # 1. Python language and project structure
 
 ## Core syntax and concepts
@@ -176,6 +174,26 @@ if parsed_date.strftime("%Y-%m-%d") != value:
 | `pytest.raises` | Confirms that code raises an expected exception. | `with pytest.raises(ValueError): ...` | Secure |
 | Import path | Locations Python searches when importing modules. | Running `python -m pytest` from the project root allowed `import main`. | Review |
 
+## Notebooks and kernels
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| Jupyter notebook | An interactive document that stores code cells, Markdown cells, outputs and notebook metadata in an `.ipynb` file. | Useful for exploratory analysis and explanatory workflows. | Review |
+| `.ipynb` | JSON-based file format used by Jupyter notebooks. | The notebook stores cell source, outputs and execution metadata. | Review |
+| Code cell | A notebook cell containing executable code sent to the selected kernel. | A pandas import or calculation belongs in a code cell. | Secure |
+| Markdown cell | A notebook cell containing formatted explanatory text rather than executable Python. | Use headings such as `## 3. Data-quality checks`. | Secure |
+| Output cell state | Results stored beneath a code cell after execution. Stored output may be stale if the source code later changes. | A visible table does not prove the current code produced it in a clean run. | Review |
+| Kernel | The running process that executes notebook code and keeps variables in memory. | Restarting the kernel clears in-memory objects. | Review |
+| `ipykernel` | The Python package that allows a Python interpreter to act as a Jupyter kernel. | The environment used version 6 after version 7.3.0 caused VS Code execution hangs. | Review |
+| Hidden notebook state | Variables or imports left in kernel memory from cells run earlier or out of order. | A notebook may work interactively but fail after restart if it relies on hidden state. | Review |
+| Restart and run all | Clears the kernel, then executes every cell in order to test reproducibility. | Use before considering an analysis complete. | Review |
+| `sys.executable` | Path to the Python interpreter executing the current process or notebook kernel. | `print(sys.executable)` confirmed the `.venv` interpreter. | Review |
+| Current working directory | Directory used as the starting point for relative file paths. It is separate from the interpreter location. | A notebook opened from `tests` resolved paths from that folder. | Review |
+| `Path.cwd()` | Returns the process's current working directory as a `Path` object. | `from pathlib import Path; print(Path.cwd())` | Review |
+| Relative path | A path interpreted from the current working directory rather than from a fixed drive root. | `../data/results.csv` goes up one directory before entering `data`. | Review |
+| Absolute path | A complete path beginning from a drive or filesystem root. | Useful for diagnosis but less portable between computers. | Review |
+| Kernel compatibility | Whether the selected kernel package versions work correctly with the notebook client and extensions. | Pinning `ipykernel<7` resolved repeated `Run All` hangs in this environment. | Review |
+
 ## Virtual environment commands
 
 ```bash
@@ -293,11 +311,24 @@ results.mean(axis=1)  # removes the column axis -> one value per row
 | Row-wise broadcasting | A column-shaped array supplies one value per row and broadcasts across columns. | `(6, 3) + (6, 1)` | Review |
 | Broadcasting error | Occurs when corresponding dimensions are neither equal nor `1`. | `(6, 3) + (2,)` fails because `3` and `2` conflict. | Review |
 
+
+## Linear-algebra functions
+
+| Function / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| `np.dot(a, b)` | Calculates a dot product for one-dimensional vectors by multiplying corresponding components and summing the products. | `np.dot(np.array([2, 1]), np.array([-1, 3]))` returns one scalar. | Secure |
+| `a @ b` | Performs matrix multiplication using NumPy's shape rules. | `(m, n) @ (n, p)` produces shape `(m, p)`; `(m, n) @ (n,)` produces shape `(m,)`. | Secure |
+| `np.linalg` | NumPy namespace containing common linear-algebra functions. | Includes `norm`, `solve` and `matrix_rank`. | Review |
+| `np.linalg.norm()` | Calculates a vector or matrix norm; for a one-dimensional vector, the default is its Euclidean magnitude. | `np.linalg.norm(np.array([3, 4]))` returns `5.0`. | Secure |
+| `np.linalg.solve()` | Solves a square linear system `A @ x = b` when `A` has a unique solution. | `coefficients = np.linalg.solve(matrix, target)` | Review |
+| `np.linalg.matrix_rank()` | Returns the number of linearly independent rows or columns represented by a matrix. | Rank 1 spans one dimension; rank 2 can span a two-dimensional plane. | Review |
+| `np.allclose()` | Tests whether numeric arrays are equal within floating-point tolerances. | `np.allclose(matrix @ coefficients, target)` | Review |
+
 ## Combining, sorting and exporting arrays
 
 | Function / syntax | Definition | Example / note | Status |
 |---|---|---|---|
-| `np.column_stack()` | Stacks one-dimensional arrays as columns in a new 2D array. | `np.column_stack((ids, means, temperatures))` | New |
+| `np.column_stack()` | Stacks one-dimensional arrays as columns in a new 2D array. | `np.column_stack((u, v))` forms a matrix whose columns are the vectors. | Review |
 | `np.argsort()` / `.argsort()` | Returns indices that would sort an array; those indices can reorder complete rows. | `summary[summary[:, 1].argsort()]` | Review |
 | `np.savetxt()` | Saves a NumPy array to a text file. | `np.savetxt('summary.csv', data, delimiter=',')` | Review |
 | `fmt` | Controls number formatting in `np.savetxt()` and may specify one format per column. | `fmt=['%.0f', '%.2f']` | Review |
@@ -326,16 +357,181 @@ matching_values = results[mask]
 
 ---
 
-# 5. Mathematics
+# 5. pandas and tabular data
+
+## Core structures and labels
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| pandas | A third-party Python package for working with labelled tabular data. | Conventionally imported with `import pandas as pd`. | Review |
+| Series | A one-dimensional labelled pandas data structure. | `df['sample_id']` returns a Series with shape `(n,)`. | Secure |
+| DataFrame | A two-dimensional labelled table with rows and columns. | `df[['sample_id']]` returns a DataFrame with shape `(n, 1)`. | Secure |
+| Index | Labels attached to DataFrame or Series rows. They may be generated automatically or derived from data. | The default index is commonly `0, 1, 2, ...`. | Review |
+| Column labels | Names attached to DataFrame columns. | `df['temperature']` selects a column by name. | Secure |
+| `pd.DataFrame()` | Creates a DataFrame from arrays, dictionaries or other compatible data. | `pd.DataFrame(experiment, columns=columns)` | Review |
+| Homogeneous NumPy input | A DataFrame created from one NumPy array initially inherits the array’s shared dtype. | Integer-looking IDs became `float64` because the source array contained decimals. | Review |
+
+## Loading and inspecting data
+
+| Function / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| `pd.read_csv()` | Loads a CSV file into a DataFrame and infers column data types. | `df = pd.read_csv('data/results.csv')` | Review |
+| `df.head()` | Returns the first rows of a DataFrame. | `df.head(5)` | Review |
+| `df.tail()` | Returns the final rows of a DataFrame. | `df.tail(3)` | New |
+| `df.shape` | Tuple containing the number of rows and columns. | `(11, 5)` means 11 rows and 5 columns. | Secure |
+| `df.columns` | Index-like collection containing the column labels. | `list(df.columns)` converts it to a list. | Review |
+| `df.dtypes` | Series containing the dtype inferred for each column. | Numeric columns may be `int64` or `float64`. | Review |
+| `df.info()` | Prints a concise summary of rows, columns, non-null counts, dtypes and memory use. | The method prints its report and returns `None`. | Review |
+| `df.describe()` | Returns descriptive statistics for selected columns, including count, mean, standard deviation, quartiles, minimum and maximum. | `clean_df[['temperature', 'mean_result']].describe()` | Review |
+| Dtype inference | pandas examines CSV values and chooses suitable data types for each column. | Blank cells in otherwise numeric columns become missing numeric values. | Review |
+| `NaN` | A standard marker pandas uses for missing numeric data. | A blank numeric CSV field is commonly loaded as `NaN`. | Review |
+
+## Selecting and filtering
+
+| Syntax / concept | Definition | Example / note | Status |
+|---|---|---|---|
+| `df['column']` | Selects one column as a Series. | Shape `(n,)`. | Secure |
+| `df[['column']]` | Selects a list containing one column and preserves a two-dimensional DataFrame. | Shape `(n, 1)`. | Secure |
+| `df[['a', 'b']]` | Selects multiple columns as a DataFrame. | The result retains the requested column labels. | Secure |
+| `.loc` | Selects rows and columns by labels or Boolean conditions. | `df.loc[df['temperature'] > 22.5, 'sample_id']` | Review |
+| `.iloc` | Selects rows and columns by integer position. | `df.iloc[0:3, 1:4]` | Review |
+| Boolean filtering | Uses a Boolean Series to retain rows where the condition is `True`. | `df[df['temperature'] > 22.5]` | Review |
+| Selection output contract | A task should specify whether the output is a Series, DataFrame, mask, IDs, values or full rows. | Avoid ambiguous wording such as “return samples”. | Secure |
+
+## Derived columns, sorting and copying
+
+| Function / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| `df.assign()` | Returns a DataFrame with one or more added or replaced columns. | `df.assign(mean_result=values)` | Review |
+| Direct column assignment | Adds or replaces a column using square brackets. | `df['temperature'] = filled_values` | Review |
+| Row-wise pandas reduction | A reduction across selected columns uses `axis=1` to produce one value per row. | `df[['m1', 'm2']].mean(axis=1)` | Review |
+| `df.sort_values()` | Returns rows sorted by one or more column values. | `df.sort_values('mean_result')` | Review |
+| `df.copy()` | Creates a separate DataFrame object for cleaning or transformation. | `clean_df = raw_df.copy()` | Review |
+| Raw versus cleaned data | Preserving the original DataFrame makes cleaning steps auditable and reversible. | Keep `raw_df` unchanged and modify `clean_df`. | Secure |
+
+## Missing values and duplicates
+
+| Function / concept | Definition | Example / note | Status |
+|---|---|---|---|
+| `df.isna()` | Returns a Boolean DataFrame marking missing values. | `df.isna().sum()` counts missing values per column. | Review |
+| `df.dropna()` | Removes rows or columns containing missing values according to supplied rules. | `df.dropna(subset=['measurement_1', 'measurement_2'])` | Review |
+| `df.fillna()` | Replaces missing values with a supplied value or rule. | `df['temperature'].fillna(median_temperature)` | Review |
+| `df.duplicated()` | Returns a Boolean Series marking duplicated rows. | `df.duplicated().sum()` counts exact duplicates. | Review |
+| `df.drop_duplicates()` | Removes repeated rows, keeping the first occurrence by default. | `clean_df = df.copy().drop_duplicates()` | Review |
+| Exact duplicate row | A row whose compared column values match an earlier row. | Different from repeating only an identifier. | Secure |
+| Duplicated identifier | Two or more rows share an identifier but may differ elsewhere. | A repeated `sample_id` is not automatically an exact duplicate. | Secure |
+| Median imputation | Replaces a missing numeric value with the median of observed values. | Calculate the median after earlier cleaning steps specified by the workflow. | Review |
+| Cleaning order | The order of cleaning operations can change calculated statistics and final outputs. | Removing a duplicate before calculating the median changed the imputed temperature. | Secure |
+
+## Grouping and aggregation
+
+| Function / concept | Definition | Example / note | Status |
+|---|---|---|---|
+| `df.groupby()` | Splits rows into groups sharing one or more key values so each group can be summarised or transformed. | `df.groupby('treatment')` | Review |
+| Group key | Column or index level used to define groups. | `'treatment'` was the group key. | Review |
+| `.agg()` | Applies one or more aggregation functions to grouped or ungrouped data. | Count, mean, minimum and maximum can be calculated together. | Review |
+| Named aggregation | Creates explicitly named output columns using `output=('source_column', 'function')`. | `sample_count=('sample_id', 'count')` | Review |
+| MultiIndex columns | Hierarchical column labels created when several aggregations are requested using dictionary/list syntax. | `mean_result` may have second-level labels `mean`, `min` and `max`. | Review |
+| `as_index=False` | Keeps group keys as normal DataFrame columns instead of moving them into the index. | `df.groupby('treatment', as_index=False)` | Review |
+| `reset_index()` | Moves index levels back into ordinary columns and creates a default integer index. | Useful after grouping with the default `as_index=True`. | Review |
+| Aggregation output structure | Grouped calculations must control both the values and the resulting column/index layout. | Correct statistics can still be exported incorrectly if labels remain in the index. | Review |
+
+### Named aggregation example
+
+```python
+group_summary = (
+    clean_df
+    .groupby('treatment', as_index=False)
+    .agg(
+        sample_count=('sample_id', 'count'),
+        mean_result=('mean_result', 'mean'),
+        minimum_result=('mean_result', 'min'),
+        maximum_result=('mean_result', 'max'),
+        mean_temperature=('temperature', 'mean')
+    )
+)
+```
+
+## Exporting pandas data
+
+| Function / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| `df.to_csv()` | Writes a DataFrame to a CSV file. | `df.to_csv('results.csv', index=False)` | Review |
+| `index=False` | Prevents the pandas index from being written as an extra CSV column. | Usually appropriate when the index is not meaningful source data. | Secure |
+| Index loss during export | Data stored only in the index is omitted when exporting with `index=False`. | Convert meaningful index labels into columns first. | Review |
+
+---
+
+# 6. Exploratory data analysis and visualisation
+
+## Analysis workflow and interpretation
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| Exploratory data analysis (EDA) | The process of inspecting, summarising and visualising data to understand its quality, distributions, relationships and limitations before formal modelling. | Combine data checks, descriptive statistics, plots and written interpretation. | Review |
+| Analysis question | A specific question that determines which summaries and plots are relevant. | “What differences are observed in mean result across treatment groups?” | Secure |
+| Descriptive statistics | Numerical summaries that describe observed data without making population-level causal claims. | Count, mean, standard deviation, quartiles, minimum and maximum. | Review |
+| Distribution | The pattern of values in a variable, including centre, spread, shape and unusual observations. | A histogram provides a binned view of a numeric distribution. | Review |
+| Observed range | Difference between the largest and smallest observed values. | `maximum - minimum` | Secure |
+| Sample size | Number of observations included in an analysis or group. | Here, treatment groups contained only two or three observations. | Secure |
+| Sampling variability | Natural variation in estimates caused by observing one sample rather than the entire population. | Larger samples generally reduce sampling variability but do not eliminate randomness. | Review |
+| Association | Two variables show a pattern of changing together in the observed data. | Association alone does not prove that one causes the other. | Review |
+| Causation | A change in one variable directly produces a change in another, under a justified causal design and analysis. | A grouped observational pattern is insufficient by itself. | Review |
+| Confounding | A third variable is related to both the explanatory variable and the outcome, making their effects difficult to separate. | Treatment and temperature changed together in the exercise dataset. | Review |
+| Limitation | A feature of the data or method that restricts the strength or scope of conclusions. | Tiny groups, missing-data choices and confounding were explicit limitations. | Secure |
+| Missing-data trade-off | Both filling and deleting missing observations can affect estimates and introduce bias; the choice depends on context and assumptions. | Median imputation preserves a row but can reduce variation; deletion discards information. | Review |
+| Reproducible analysis | An analysis that can be rerun from the same inputs and recorded dependencies in a clean, ordered execution state. | Restart the kernel and run every cell from top to bottom. | Review |
+
+## Matplotlib and plots
+
+| Term / syntax | Definition | Example / note | Status |
+|---|---|---|---|
+| Matplotlib | A Python plotting library used to create static, animated and interactive visualisations. | Commonly imported through `matplotlib.pyplot`. | Review |
+| `matplotlib.pyplot` | A plotting interface that provides functions for creating figures and axes. | `import matplotlib.pyplot as plt` | Review |
+| `plt.subplots()` | Creates a Figure and one or more Axes objects. | `fig, ax = plt.subplots()` | Review |
+| Figure | The complete Matplotlib canvas that can contain one or more plots. | Stored as `fig` in `fig, ax = plt.subplots()`. | Review |
+| Axes | The plotting area on which data, titles and axis labels are drawn. | Call methods such as `ax.hist()` and `ax.set_title()`. | Review |
+| `ax.hist()` | Draws a histogram by grouping numeric observations into intervals. | `ax.hist(clean_df['mean_result'], bins=6)` | Review |
+| Histogram | A plot showing how many numeric observations fall into adjacent intervals. | Useful for distribution shape, but unstable with very small samples. | Review |
+| Bin | One numeric interval used by a histogram. | Too many bins for eight values can exaggerate fragmentation. | Review |
+| `DataFrame.boxplot()` | Creates a box plot from DataFrame columns, optionally grouped by a categorical variable. | `clean_df.boxplot(column='mean_result', by='treatment', ax=ax)` | Review |
+| Box plot | Summarises a distribution using the median, quartiles, whiskers and possible outliers. | With only two or three values per group, the summary is not stable. | Review |
+| Observation-level data | Data containing one row per measured observation rather than one pre-aggregated row per group. | Required to show within-group variation in a box plot. | Review |
+| Aggregated data | Data already reduced to summaries such as one mean per group. | A group-summary table cannot recover the original within-group distribution. | Review |
+| `ax.set_title()` | Sets the title for one Axes object. | `ax.set_title('Mean result by treatment')` | Review |
+| `ax.set_xlabel()` | Sets the x-axis label. | `ax.set_xlabel('Treatment')` | Review |
+| `ax.set_ylabel()` | Sets the y-axis label. | `ax.set_ylabel('Mean result')` | Review |
+| `fig.suptitle()` | Sets or clears the overall Figure title. | `fig.suptitle('')` removes pandas' automatic box-plot heading. | Review |
+| `plt.show()` | Explicitly displays pending Matplotlib figures. | Notebooks may render the last figure automatically, but explicit display is clearer in scripts. | New |
+
+---
+
+# 7. Mathematics
 
 ## Linear algebra
 
-| Term | Definition | Formula / note | Status |
+| Term / syntax | Definition | Formula / note | Status |
 |---|---|---|---|
+| Scalar | A single numerical value used alone or to scale a vector. | In `3 * v`, `3` is the scalar. | Secure |
+| Vector | A mathematical object with components that can represent magnitude and direction; a one-dimensional NumPy array can represent one computationally. | `np.array([2, 1])` has shape `(2,)`. | Secure |
+| Vector component | One coordinate of a vector relative to a chosen basis. | For `(x, y)`, `x` and `y` are the components. | Secure |
+| Vector norm | The magnitude or length of a vector. | Euclidean norm: \(\lVert v\rVert=\sqrt{\sum_i v_i^2}\). | Secure |
+| Euclidean distance | Straight-line distance between two vectors or points. | \(d(a,b)=\lVert a-b\rVert\). | Secure |
+| Dot product | Multiplies matching vector components and sums the products, producing a scalar for two one-dimensional vectors. | \(a\cdot b=\sum_i a_i b_i\). | Secure |
 | Matrix | A rectangular array of numbers arranged in rows and columns. | A matrix with 2 rows and 3 columns has shape \(2 \times 3\). | Secure |
 | Matrix dimensions | Written as rows × columns. | \(A_{2\times3}B_{3\times2}\) produces a \(2\times2\) matrix. | Secure |
-| Matrix multiplication | Each output entry is the dot product of one row of the first matrix and one column of the second. | Inner dimensions must match. | Review |
-| Linear system | A set of linear equations solved simultaneously. | Can use substitution or elimination. | Secure |
+| Matrix multiplication | Each output entry is the dot product of one row of the first matrix and one column of the second. | Inner dimensions must match. | Secure |
+| Matrix-vector multiplication | Applies a matrix to a vector and returns the transformed vector. | A `(2, 2)` matrix multiplied by shape `(2,)` returns shape `(2,)`. | Secure |
+| Linear transformation | A mapping that preserves vector addition and scalar multiplication; matrices represent linear transformations once bases are chosen. | The matrix `[[2, 1], [0, 1]]` maps `(x, y)` to `(2x + y, y)`. | Secure |
+| Linear combination | A sum of vectors multiplied by scalar coefficients. | \(c_1v_1+c_2v_2+\cdots+c_kv_k\). | Secure |
+| Span | The set of every vector reachable through linear combinations of a given set of vectors. | Dependent vectors in \(\mathbb{R}^2\) may span only a line. | Secure |
+| Linear dependence | A set is dependent when a linear combination equals the zero vector using coefficients that are not all zero. | Equivalently, at least one vector is redundant and can be expressed using the others. | Review |
+| Linear independence | A set is independent when the only linear combination equal to the zero vector uses all-zero coefficients. | Independent vectors each contribute a new direction to the span. | Review |
+| Basis | A linearly independent set of vectors that spans a vector space. | A basis contains no redundant vectors. | Secure |
+| Basis equivalence in finite dimensions | For exactly `n` vectors in an `n`-dimensional space, independence, spanning the space, forming a basis and the column matrix having rank `n` are equivalent statements. | Rank `n` is a consequence or equivalent test, not an additional third requirement. | Secure |
+| Rank | The number of linearly independent columns or rows of a matrix; equivalently, the dimension spanned by its columns. | A `2 × 2` matrix has rank 2 when its columns span the plane. | Secure |
+| Full rank | A matrix has the largest rank possible for its dimensions. | A square `n × n` matrix is full rank when its rank is `n`. | Review |
+| Linear system | A set of linear equations solved simultaneously. | `A @ x = b`; a square full-rank `A` has a unique solution. | Secure |
 
 ## Calculus
 
@@ -366,7 +562,7 @@ matching_values = results[mask]
 
 ---
 
-# 6. Machine-learning concepts
+# 8. Machine-learning concepts
 
 | Term | Definition | Important distinction / formula | Status |
 |---|---|---|---|
@@ -403,7 +599,7 @@ matching_values = results[mask]
 
 ---
 
-# 7. Review queue
+# 9. Review queue
 
 These are the current highest-priority glossary items to retrieve without notes:
 
@@ -411,30 +607,64 @@ These are the current highest-priority glossary items to retrieve without notes:
 2. Validation set versus final test set.
 3. Cross-validation inside a train/test workflow.
 4. Covariance versus correlation.
-5. Exact role of a virtual environment versus `requirements.txt`.
-6. Partial derivatives.
-7. Matrix multiplication arithmetic checks.
-8. Exception scope and return placement in Python.
-9. Integer indexing `(n,)` versus dimension-preserving slicing `(n, 1)`.
-10. Choosing `axis=0` or `axis=1` without trial and error.
-11. Assignment versus NumPy views versus independent copies.
-12. The right-to-left broadcasting rule.
-13. Combining multiple Boolean conditions with `&` and parentheses.
-14. Preserving intended element order through transpose, flatten and reshape.
-15. Sorting rows in ascending and descending order with `argsort()`.
+5. Partial derivatives.
+6. Formal zero-vector definitions of linear dependence and independence.
+7. Why exactly `n` independent vectors in an `n`-dimensional space automatically span that space.
+8. Rank `n` as a consequence or equivalent basis test rather than an additional requirement.
+9. Conditions required by `np.linalg.solve()`.
+10. Verifying floating-point reconstruction with `np.allclose()`.
+11. One-dimensional NumPy vectors `(n,)` versus explicit row `(1, n)` and column `(n, 1)` shapes.
+12. Exact role of a virtual environment versus a notebook kernel and `ipykernel`.
+13. Active interpreter versus current working directory.
+14. Relative paths and `Path.cwd()`.
+15. Hidden notebook state and restart-and-run-all reproducibility.
+16. Exception scope and return placement in Python.
+17. Choosing `axis=0` or `axis=1` without trial and error.
+18. Assignment versus NumPy views versus independent copies.
+19. The right-to-left NumPy broadcasting rule.
+20. Preserving intended element order through transpose, flatten and reshape.
+21. Series versus one-column DataFrame selection.
+22. `.loc` versus `.iloc`.
+23. Cleaning-order consequences and missing-data trade-offs.
+24. Named aggregation syntax.
+25. pandas index versus normal data columns.
+26. MultiIndex columns produced by multiple grouped aggregations.
+27. `plt.subplots()` and the Figure/Axes distinction.
+28. Histogram bins and plot labelling.
+29. Observation-level versus aggregated data for grouped plots.
+30. Sampling variability versus “eliminating randomness.”
+31. Association versus causation.
+32. Confounding and its effect on interpretation.
 
 ---
 
-# Maintenance rules
+# Appendix — Maintenance and machine-readable formatting rules
 
 This file is a subject-organised reference, not a session history.
 
+## Content maintenance
+
 After each study session:
 
-1. Insert new terms into the most relevant existing section.
+1. Insert new terms into the most relevant existing subject section.
 2. Update existing definitions and confidence statuses in place.
 3. Remove duplicates rather than recording the same concept twice.
 4. Create a new top-level section only when the material introduces a genuinely new subject area.
 5. Renumber and reorder sections so the document remains logically organised.
-6. Keep the consolidated review queue at the end.
+6. Keep the consolidated review queue near the end.
 7. Record chronological progress, mistakes and AI interventions only in `ai_log.md`.
+
+## Machine-readable table contract
+
+The glossary can also act as the data source for a lookup program when these rules are followed:
+
+1. Store every searchable term in a four-column Markdown table.
+2. Use the column order: **Term / syntax**, **Definition**, **Example / note**, **Status**.
+3. Keep one concept or callable per row.
+4. Use top-level and second-level headings as subject and subtopic categories.
+5. Put function, method and syntax names in backticks.
+6. Use only the statuses **Secure**, **Review** and **New**.
+7. Avoid unescaped vertical bars inside table cells; write `\|` when a literal bar is necessary.
+8. Keep longer worked examples in code blocks directly below the relevant table rather than embedding multiline content in a row.
+9. Do not create chronological “session update” sections in this file.
+10. A lookup program should search the term, definition, example, subject and subtopic rather than relying on a manually maintained keyword list.

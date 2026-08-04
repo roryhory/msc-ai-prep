@@ -367,3 +367,452 @@ The main difficulties came from choosing the correct axis and distinguishing an 
 Begin pandas with Series and DataFrames, then load a CSV and practise column selection, row filtering, missing-value inspection and grouped summaries.
 
 ---
+
+## Entry 005 — pandas Fundamentals, Cleaning and Grouped Summaries
+
+**Date:** 29 July 2026  
+**Plan stage:** Week 2 recovery — pandas and tabular-data analysis  
+**Status:** Completed; Week 2 pandas foundations achieved  
+**Overall confidence:** Green for the current minimum outcome; grouped aggregation remains a review item
+
+### Tasks
+
+Complete two linked pandas sessions:
+
+1. Build a labelled DataFrame from the existing NumPy experiment, select columns, filter rows, create derived columns, sort the result and export it.
+2. Load a CSV containing missing values and a duplicate row, inspect its structure, apply cleaning rules in a specified order, calculate a derived measurement, create a grouped summary and export both cleaned and summarised datasets.
+
+### Independent work completed
+
+- Created a DataFrame from a NumPy array with explicit column labels.
+- Correctly predicted its shape, column names and dtypes.
+- Distinguished a Series from a one-column DataFrame.
+- Selected individual columns and sets of columns.
+- Used `.loc` with Boolean conditions to return matching sample IDs.
+- Created mean, minimum and maximum result columns.
+- Sorted a DataFrame by a named column.
+- Exported a DataFrame to CSV without the pandas-generated index.
+- Loaded a CSV with `pd.read_csv()`.
+- Inspected rows, shape, column names, dtypes and `.info()`.
+- Counted missing values and exactly duplicated rows.
+- Preserved the raw DataFrame and created a separate cleaned copy.
+- Removed exact duplicate rows.
+- Filled a missing temperature with the median calculated after duplicate removal.
+- Removed rows with missing measurement values.
+- Created a row-wise mean measurement.
+- First produced the required grouped statistics through several separate `groupby()` operations.
+- Reworked the grouped summary into one named aggregation with one `groupby()` and one `.agg()` call.
+- Preserved the treatment labels as a normal column and exported both final CSV files correctly.
+- Wrote accurate explanations of missing-value handling, duplicates, grouping and preservation of raw data.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Series versus DataFrame | Explained why `df['column']` returns a Series while `df[['column']]` returns a one-column DataFrame | One-dimensional versus two-dimensional pandas selection was new | Understood |
+| Shape reasoning | Reinforced reasoning from input shape through the axis removed by a reduction | Axis output shapes needed a clearer retrieval method | Helpful and retained |
+| Exercise wording | Acknowledged that “return samples” was ambiguous between returning IDs and full rows | Prompt ambiguity, not a learner error | Future exercises must specify the exact output type |
+| Derived columns | Identified that minimum and maximum values had been calculated but not assigned into the DataFrame | Difference between calculating a Series and modifying the DataFrame | Corrected |
+| Object naming | Pointed out that variables ending in `_df` contained Series | Naming did not reflect the returned object type | Understood |
+| Cleaning order | Identified that the median was initially calculated from the raw DataFrame rather than after duplicate removal | Ordered cleaning operations can change the result | Corrected |
+| Grouped aggregation | Suggested reducing five separate grouped calculations to one `groupby()` and one `.agg()` | The first correct solution was more complicated than necessary | Rewritten |
+| MultiIndex columns | Explained why dictionary-style multi-aggregation produced two header levels | Multiple aggregations on one source column create hierarchical column labels | Understood |
+| Named aggregation | Explained `output_name=('source_column', 'function')` | Needed a direct way to control grouped-output column names | Implemented |
+| Index handling | Identified that treatment labels would be lost when an index-based summary was exported with `index=False` | Index versus data-column distinction | Corrected |
+| CSV export | Identified one missing `index=False` argument | Export defaults were not yet automatic | Corrected |
+| Method chaining syntax | Identified a misplaced full stop before `.agg()` | New multiline chaining syntax | Corrected |
+
+### Strengths demonstrated
+
+- Transferred NumPy axis knowledge into row-wise pandas calculations.
+- Correctly predicted that all columns created from the homogeneous NumPy array would initially use `float64`.
+- Asked focused questions about dimensionality instead of memorising bracket syntax.
+- Correctly interpreted the ambiguous filtering task as returning sample IDs and challenged the feedback when the wording did not support a single answer.
+- Completed the initial grouped summary independently, even though it was verbose.
+- Recognised that the first grouped solution was more complicated than necessary.
+- Persisted through unfamiliar `groupby()` and `.agg()` behaviour rather than abandoning the task.
+- Understood the source-column, aggregation-function and output-column relationship in named aggregation.
+- Applied corrections without replacing the entire program.
+- Completed both pandas sessions with working exports and accurate conceptual explanations.
+
+### Weak points and recurring issues
+
+1. **Output contracts:** exercises should explicitly state whether the result must be a Series, DataFrame, mask, IDs, values or full rows.
+2. **Object types:** variable names should reflect whether the result is a Series or DataFrame.
+3. **Cleaning order:** each transformation should be checked against the requested sequence because earlier operations may alter later statistics.
+4. **Grouped aggregation syntax:** named aggregation is understood after guidance but is not yet retrievable from memory.
+5. **Index versus column:** pandas indexes can disappear during export when `index=False` is used.
+6. **Method chaining:** multiline syntax still needs care.
+7. **Proofreading:** explanatory comments contained a few spelling and wording errors after the technical work was complete.
+
+### Diagnostic outcome
+
+**I can already:** create, inspect, select, filter, derive, sort, clean, group and export labelled tabular data using pandas.
+
+**I need to refresh:** named aggregation syntax, index handling, cleaning-order consequences, and selection output types.
+
+**I cannot yet:** claim fluent independent use of complex `groupby()` operations, hierarchical indexes or advanced reshaping.
+
+### Reproduction status
+
+- DataFrame creation and inspection: Yes.
+- Series versus one-column DataFrame: Yes.
+- Label-based filtering with `.loc`: Yes.
+- Derived columns and sorting: Yes.
+- Missing-value and duplicate inspection: Yes.
+- Basic cleaning operations: Likely yes.
+- Named grouped aggregation: Partial; reproduce once without notes.
+- MultiIndex columns: Conceptually understood; not yet practised beyond this example.
+- CSV export without the index: Yes.
+
+### Short no-AI retrieval check
+
+1. Explain the outputs of `df['sample_id']` and `df[['sample_id']]`, including their dimensionality.
+2. Explain the difference between `.loc` and `.iloc`.
+3. Recreate the missing-value and duplicate inspection steps from memory.
+4. Explain why calculating the median before versus after duplicate removal can produce different values.
+5. Write one named aggregation that calculates count, mean, minimum and maximum by treatment.
+6. Explain the roles of `as_index=False` and `reset_index()`.
+7. Explain why `index=False` is normally useful when exporting a DataFrame to CSV.
+8. Distinguish an exact duplicate row from a duplicated identifier.
+
+### Weekly reflection
+
+**Most important thing learned:**  
+pandas makes tabular analysis easier by attaching labels to rows and columns, but it also introduces an index whose behaviour must be considered during grouping and export.
+
+**Recurring error or misconception:**  
+The hardest part was not calculating the statistics; it was controlling the exact structure and names of the grouped output.
+
+**First task next:**  
+Build the exploratory-data-analysis notebook using the cleaned dataset, descriptive statistics, labelled plots, written interpretations and explicit limitations.
+
+---
+
+---
+
+## Entry 006 — Exploratory Data Analysis Notebook
+
+**Date:** 30 July 2026  
+**Plan stage:** Week 2 recovery — exploratory data analysis and notebook workflow  
+**Status:** Completed; Week 2 EDA minimum outcome achieved  
+**Overall confidence:** Green for notebook structure and the pandas workflow; Amber for Matplotlib syntax and statistical interpretation
+
+### Tasks
+
+Create a reproducible Jupyter notebook that:
+
+1. presents an analysis question and dataset overview;
+2. documents data-quality checks and earlier cleaning decisions;
+3. calculates descriptive statistics and grouped summaries;
+4. creates labelled visualisations;
+5. interprets observed patterns without claiming causation;
+6. records limitations and a session reflection;
+7. runs successfully from a clean kernel state.
+
+The session also included diagnosing notebook path and kernel problems in VS Code.
+
+### Independent work completed
+
+- Adapted quickly to the `.ipynb` format after an initial period of orientation.
+- Organised the analysis into separate Markdown sections with nearby code, output and interpretation cells.
+- Loaded and displayed both the raw and cleaned experimental datasets.
+- Counted missing values and displayed the exact duplicated row.
+- Explained the cleaning decisions and compared the original and cleaned dataset shapes.
+- Added a row-wise `mean_result` column.
+- Generated descriptive statistics with `describe()`.
+- Recreated the flat named grouped aggregation, although the exact `.agg()` syntax was checked.
+- Correctly reported the remaining observations in each treatment group.
+- Created a labelled histogram of `mean_result`.
+- Looked up unfamiliar Matplotlib functions rather than requesting a complete generated solution.
+- Replaced the initial group-mean bar chart with a box plot based on individual observations.
+- Repeatedly acknowledged that groups of two or three observations cannot support strong conclusions.
+- Identified treatment–temperature confounding as a dataset-specific limitation.
+- Explained the difference between describing an association and claiming causation.
+- Recorded the requirements for notebook reproducibility.
+- Restarted the kernel and successfully ran the notebook after resolving the `ipykernel` compatibility issue.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Relative file paths | Explained that relative paths begin from the current working directory rather than the selected virtual environment | The notebook had accidentally been started from the `tests` directory | Understood after checking the working directory |
+| Interpreter versus working directory | Distinguished the `.venv` interpreter from the folder used to resolve relative paths | Kernel selection and file location were initially conflated | Understood |
+| Kernel hang | Connected repeated VS Code `Run All` hangs with `ipykernel 7.3.0` and advised pinning below version 7 | Notebook execution queue became stuck despite valid code | Reverting to version 6 resolved the issue |
+| Notebook structure | Recommended separate Markdown cells for each analysis section | The relationship between headings, code and interpretation was new | Applied successfully |
+| Plot choice | Identified that a bar chart of group means hid the individual observations and did not meet the requested plot type | Visualisation should match both the task and the data structure | Replaced with a box plot |
+| Box-plot input | Explained that the plot must use observation-level `clean_df`, not the one-row-per-group summary | A box plot needs a distribution within each group | Understood and implemented |
+| Histogram bins | Suggested reducing the number of bins for only eight observations | Too many bins can make a tiny dataset look artificially fragmented | Reduced to six |
+| Reproducibility | Expanded the reflection beyond a virtual environment to include inputs, dependencies, cell order, hidden state and a clean top-to-bottom run | Environment isolation alone does not make a notebook reproducible | Corrected |
+| Sampling language | Clarified that larger samples reduce sampling variability rather than eliminating randomness | Statistical wording was too absolute | Review needed |
+| Missing-data interpretation | Clarified that median imputation is a trade-off rather than automatically bad practice | Cleaning choices were being judged categorically | Review needed; notebook wording remains too absolute |
+| Association and causation | Reinforced cautious interpretation and identified treatment–temperature confounding | Group differences cannot establish which variable caused the pattern | Applied |
+
+### Strengths demonstrated
+
+- The pandas operations were straightforward once the notebook interface was understood, showing that the previous two sessions had transferred.
+- The notebook has a clear narrative structure rather than being a collection of disconnected code cells.
+- The user independently consulted documentation for unfamiliar Matplotlib functions.
+- Data-quality checks, descriptive statistics and grouped summaries were reproduced successfully.
+- The user consistently resisted overclaiming from a sample of only eight cleaned observations.
+- A specific confounding variable was identified rather than relying only on a generic small-sample limitation.
+- The environment problem was diagnosed using the active interpreter and `ipykernel` version rather than changing working analysis code.
+- The final notebook could be run after restarting the kernel, which is an important reproducibility check.
+
+### Weak points and recurring issues
+
+1. **Matplotlib retrieval:** plotting syntax is new and was looked up; it is not yet independently reproducible.
+2. **Named aggregation retrieval:** the relationship `output=('source_column', 'function')` was understood but still needed reference material.
+3. **Statistical precision:** larger samples reduce sampling variability; they do not remove the inherent randomness of sampling.
+4. **Imputation trade-offs:** median imputation can reduce variability and distort relationships, while deleting a row can also bias results or waste information. It should not be labelled universally as bad practice.
+5. **Plot selection:** a box plot technically met the task, but groups of only two or three points make quartiles and whiskers unstable; an individual-point plot would often communicate this dataset more directly.
+6. **Conciseness:** repeatedly restating the tiny sample size made some interpretations repetitive. State the limitation clearly once, then refer back to it where necessary.
+7. **Proofreading:** several spelling and grammar errors remained after the technical work, including `limitiation`, `respectivley`, `an trend` and `do not known`.
+
+### Diagnostic outcome
+
+**I can already:** create and organise a notebook; combine Markdown, code, outputs and interpretation; reproduce core pandas inspection and grouping operations; create basic labelled plots with reference material; and run a notebook from a clean kernel state.
+
+**I need to refresh:** Matplotlib syntax, named aggregation syntax, the distinction between kernel/interpreter/working directory, sampling-variability language, and balanced discussion of missing-data choices.
+
+**I cannot yet:** independently choose and implement the most informative plot for every dataset, make inferential statistical claims from grouped data, or troubleshoot all Jupyter/VS Code kernel problems without guidance.
+
+### Reproduction status
+
+- Notebook and Markdown-cell structure: Yes.
+- Raw and cleaned-data inspection: Yes.
+- Descriptive statistics with `describe()`: Likely yes.
+- Named grouped aggregation: Partial; exact syntax was looked up.
+- Histogram creation and labelling: Partial; Matplotlib is new.
+- Box-plot creation and labelling: Partial; implemented after direct guidance.
+- Association versus causation: Yes at a conceptual level.
+- Confounding: Likely; correctly identified in this dataset.
+- Reproducible restart-and-run-all workflow: Yes.
+- Virtual environment, kernel and working-directory distinctions: Partial.
+- Diagnosing or pinning `ipykernel`: Partial; completed with guidance.
+
+### Short no-AI retrieval check
+
+Complete later using a fresh dataset rather than this experimental-results file:
+
+1. Print the active interpreter and current working directory, and explain why they may point to different folders.
+2. Explain the roles of a virtual environment, notebook kernel and `ipykernel`.
+3. Explain hidden notebook state and why restarting the kernel before running all cells matters.
+4. Create and label a histogram from memory.
+5. Create a grouped plot using observation-level data and explain why a one-row-per-group summary is insufficient for a box plot.
+6. Write one named aggregation without notes.
+7. Explain why increasing sample size reduces sampling variability rather than eliminating randomness.
+8. Distinguish association, causation and confounding using a new example.
+9. Give one advantage and one disadvantage of median imputation and row deletion.
+
+### Weekly reflection
+
+**Most important thing learned:**  
+A notebook is not just Python split into cells: it combines executable analysis, stored outputs and written reasoning, and it is only reproducible when it runs correctly from a clean kernel in a logical top-to-bottom order.
+
+**Recurring error or misconception:**  
+The main remaining difficulties were not the pandas calculations. They were environment distinctions, unfamiliar plotting syntax and precise statistical language.
+
+**First task next:**  
+Complete a brief no-notes retrieval exercise with a fresh dataset, then move to the next subject in the preparation plan rather than continuing to reuse the eight-row experiment dataset.
+
+---
+
+## Entry 007 — Vectors, Dot Products and Matrix Transformations
+
+**Date:** 4 August 2026  
+**Plan stage:** Week 3 — linear algebra foundations  
+**Status:** Completed; first linear-algebra notebook achieved  
+**Overall confidence:** Green for vector calculations, matrix-shape reasoning and basic transformations
+
+### Tasks
+
+Create a notebook that:
+
+1. retrieves earlier NumPy shape, axis and matrix-multiplication knowledge;
+2. calculates vector addition, scalar multiplication, dot products, norms and Euclidean distance;
+3. verifies a dot product manually;
+4. applies a matrix transformation to two vectors;
+5. predicts whether several matrix products are valid and states their output shapes;
+6. reflects on vectors, NumPy arrays and matrices as transformations.
+
+### Independent work completed
+
+- Correctly identified the shapes `(3,)`, `(1, 3)` and `(3, 1)`.
+- Correctly explained that `axis=0` removes the row axis and `axis=1` removes the column axis.
+- Retrieved the matrix-multiplication rule that the inner dimensions must match.
+- Distinguished element-wise multiplication from matrix multiplication.
+- Calculated vector addition and scalar multiplication correctly.
+- Calculated and manually verified the dot product.
+- Calculated the norm of each vector and the Euclidean distance between them.
+- Applied a two-dimensional transformation matrix to both vectors.
+- Predicted the validity and output shape of all four matrix products correctly.
+- Explained a matrix as a mapping from an input vector to an output vector.
+- Restarted the kernel and successfully ran the notebook in order.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Vector versus list | Explained that a Python list is a generic container, while a NumPy array can represent a vector and supports numerical vector operations | The stored values looked similar, obscuring their different behaviour | Understood |
+| One-dimensional shape | Clarified that shape `(n,)` has no explicit row or column dimension | NumPy's one-dimensional vectors differ from formal row and column vectors | Review |
+| Matrix transformation | Refined the interpretation of `(x, y) → (2x + y, y)` as horizontal scaling combined with shear rather than only shear | Geometric terminology was less precise than the calculation | Corrected |
+| Reflection prompt | Clarified that “Which shape rule caused the most uncertainty?” asked for honest reflection rather than another calculation | Prompt intent was unclear | Understood |
+
+### Strengths demonstrated
+
+- Retrieval from the NumPy sessions was accurate.
+- Shape reasoning was completed before calculation rather than inferred from output.
+- Manual arithmetic agreed with NumPy results.
+- Matrix-vector multiplication was connected to a geometric coordinate transformation.
+- Unclear reflective questions were challenged instead of answered mechanically.
+- The technical work was correct before feedback.
+
+### Weak points and recurring issues
+
+1. A one-dimensional NumPy array does not explicitly encode whether a vector is a row or column.
+2. Formal mathematical language sometimes lags behind correct computational work.
+3. Geometric descriptions of transformations need to identify each component of the mapping precisely.
+4. Reflection prompts should state whether they are asking for mathematics or self-assessment.
+
+### Reproduction status
+
+- Vector addition and scalar multiplication: Yes.
+- Dot product, norm and Euclidean distance: Yes.
+- Manual dot-product verification: Yes.
+- Matrix-vector multiplication: Yes.
+- Matrix-product shape rules: Yes.
+- Geometric interpretation of a new transformation: Likely; retrieve once with a different matrix.
+- Vector versus Python list explanation: Yes after clarification.
+
+### Short no-AI retrieval check
+
+1. Explain why `[2, 1] * 3` behaves differently from `np.array([2, 1]) * 3`.
+2. State the output shape of `(4, 2) @ (2,)`.
+3. Calculate a two-dimensional dot product manually and with NumPy.
+4. Explain what a vector norm represents.
+5. Describe the mapping produced by a new `2 × 2` transformation matrix.
+
+### Session reflection
+
+**Most important thing learned:**  
+A matrix can be interpreted as a transformation that maps each input vector to a new vector, rather than only as a rectangular table of values.
+
+**Recurring error or misconception:**  
+The main conceptual uncertainty was the distinction between a mathematical vector, a NumPy representation of a vector and an ordinary Python list.
+
+**First task next:**  
+Use linear combinations to study span, basis, linear dependence, linear independence and matrix rank.
+
+---
+
+## Entry 008 — Span, Basis, Linear Independence and Rank
+
+**Date:** 4 August 2026  
+**Plan stage:** Week 3 — linear algebra foundations  
+**Status:** Completed; span, basis and rank minimum outcome achieved  
+**Overall confidence:** Green for the current two-dimensional concepts and calculations
+
+### Tasks
+
+Create a notebook that:
+
+1. defines linear combinations, span, basis, linear dependence and linear independence;
+2. calculates several linear combinations;
+3. forms matrices from column vectors;
+4. predicts and calculates matrix rank;
+5. decides whether column vectors are independent and whether they span two-dimensional space;
+6. solves for the coefficients representing a target vector;
+7. verifies the reconstructed target;
+8. reasons about membership in a span without solving;
+9. connects basis conditions with rank.
+
+### Independent work completed
+
+- Defined linear combinations, span and basis in geometric terms.
+- Calculated all requested linear combinations correctly.
+- Used `np.column_stack()` to create matrices from pairs of vectors.
+- Correctly predicted rank 1 for the dependent pair and rank 2 for the independent pair.
+- Correctly explained that the dependent vectors span a line while the independent pair spans the plane.
+- Solved the target-vector coefficients manually before using `np.linalg.solve()`.
+- Printed the coefficient shape and verified the reconstruction with matrix multiplication and `np.allclose()`.
+- Correctly identified which target vectors belonged to the dependent pair's span.
+- Correctly concluded which vector pair formed a basis for two-dimensional space.
+- Corrected the scalar-multiple relationship between the dependent vectors.
+- Added formal zero-vector definitions of dependence and independence.
+- Distinguished basis requirements from consequences and equivalent rank tests.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Learning sequence | The first plan introduced rank without a dedicated explanation; a separate rank explanation was added before its use | Concept introduction and practice were not sequenced clearly enough | Corrected |
+| Scalar relationship | Identified a reversed scalar equation for the dependent vectors | The conclusion was correct but the written equation was not | Corrected |
+| Formal dependence | Added the non-trivial zero-vector definition | The initial explanation was intuitive but not fully formal | Review |
+| Formal independence | Added the all-zero-coefficients definition | The initial inequality did not specify the coefficient conditions | Review |
+| Requested outputs | Suggested printing matrix shapes, ranks and coefficient shape explicitly | Values were calculated but not all requested outputs were displayed | Corrected |
+| Floating comparison | Replaced exact array equality with `np.allclose()` for numerical verification | Floating-point solutions should be compared approximately | Implemented |
+| Basis feedback | AI initially treated spanning as an additional condition for exactly two independent vectors in two-dimensional space; the user correctly challenged this | Equivalent finite-dimensional conditions were presented as independent requirements | AI correction withdrawn |
+| Rank feedback | AI initially phrased rank `n` as a third requirement alongside independence and spanning; the user correctly distinguished it as a consequence or equivalent test | Defining conditions were conflated with consequences | Corrected |
+
+### Strengths demonstrated
+
+- Connected algebraic rank calculations with the geometry of a line versus a plane.
+- Predicted ranks before calling NumPy.
+- Solved a linear system manually and then verified it computationally.
+- Reasoned about span membership without relying on `np.linalg.solve()`.
+- Understood that redundant vectors do not add a new dimension to a span.
+- Critically evaluated feedback and identified two incorrect or misleading claims.
+- Made the important distinction between a definition, a logical consequence and an equivalent test.
+- Applied corrections without losing the original reasoning.
+
+### Weak points and recurring issues
+
+1. Formal definitions should be checked against the zero-vector formulation after developing geometric intuition.
+2. Written scalar relationships need a quick arithmetic verification.
+3. Rank conditions should be stated exactly, such as rank 2 for a two-dimensional basis.
+4. Proofreading remains necessary after the mathematics is complete.
+5. `np.linalg.solve()` and `np.allclose()` have only been used once and need retrieval on new values.
+
+### Diagnostic outcome
+
+**I can already:** calculate and interpret linear combinations, identify dependent and independent vector pairs, determine their span, use rank to describe the dimension represented by matrix columns, solve a full-rank two-dimensional system and verify its reconstruction.
+
+**I need to refresh:** the formal zero-vector definitions, NumPy's linear-algebra function syntax, and the exact assumptions required by `np.linalg.solve()`.
+
+**I cannot yet:** claim independent fluency with determinants, inverses, eigenvalues, eigenvectors, higher-dimensional bases or PCA.
+
+### Reproduction status
+
+- Linear combinations: Yes.
+- Geometric meaning of span: Yes.
+- Dependence and independence from scalar relationships: Yes.
+- Formal zero-vector definitions: Partial; retrieve without notes.
+- Basis reasoning in two-dimensional space: Yes.
+- Rank prediction and `np.linalg.matrix_rank()`: Likely yes.
+- Manual two-equation solve: Yes.
+- `np.linalg.solve()` syntax: Partial; retrieve once.
+- Verification with `np.allclose()`: Partial; retrieve once.
+- Distinction between basis conditions and rank consequences: Yes.
+
+### Short no-AI retrieval check
+
+1. State the formal zero-vector definitions of linear dependence and independence.
+2. Explain the difference between a span and a basis.
+3. Predict the rank and span of a new pair of two-dimensional vectors.
+4. Explain why exactly two independent vectors in a two-dimensional space automatically span that space.
+5. Explain why rank `n` is a consequence or equivalent test for a basis in an `n`-dimensional space, not a third separate requirement.
+6. Solve a new full-rank `2 × 2` system with `np.linalg.solve()` and verify it with `np.allclose()`.
+
+### Session reflection
+
+**Most important thing learned:**  
+Rank records the number of independent dimensions represented by the matrix columns, linking an algebraic calculation to the geometry of their span.
+
+**Recurring error or misconception:**  
+The main issue was wording: intuitive geometric conclusions were correct, but formal definitions and logical relationships needed to distinguish requirements, consequences and equivalent conditions.
+
+**First task next:**  
+Study determinants and invertibility as geometric and algebraic properties, then connect them to eigenvalues, eigenvectors and the later PCA implementation.
+
+---

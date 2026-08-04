@@ -1,0 +1,12 @@
+sample_id,treatment,measurement_1,measurement_2,temperature
+201,Control,48.2,49.1,22.0
+202,Control,51.0,50.4,22.2
+203,Control,49.5,,22.1
+204,Treatment_A,61.4,62.0,22.5
+205,Treatment_A,59.8,60.2,
+206,Treatment_A,63.1,62.7,22.6
+207,Treatment_B,70.2,71.0,23.0
+208,Treatment_B,68.9,69.4,22.9
+208,Treatment_B,68.9,69.4,22.9
+209,Treatment_B,72.3,,23.1
+210,Control,47.8,48.6,21.9

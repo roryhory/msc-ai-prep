@@ -1,0 +1,4 @@
+treatment,sample_count,mean_result,minimum_result,maximum_result,mean_temperature
+Control,3,49.18333333333334,48.2,50.7,22.03333333333333
+Treatment_A,3,61.53333333333334,60.0,62.900000000000006,22.53333333333333
+Treatment_B,2,69.875,69.15,70.6,22.95
