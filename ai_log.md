@@ -816,3 +816,222 @@ The main issue was wording: intuitive geometric conclusions were correct, but fo
 Study determinants and invertibility as geometric and algebraic properties, then connect them to eigenvalues, eigenvectors and the later PCA implementation.
 
 ---
+
+## Entry 009 — Determinants, Invertibility and Linear Systems
+
+**Date:** 5 August 2026  
+**Plan stage:** Week 3 — linear algebra foundations  
+**Status:** Completed after review and corrections  
+**Overall confidence:** Green for two-dimensional determinants, invertibility and solution classification
+
+### Tasks
+
+Create a notebook that:
+
+1. retrieves rank, basis and linear-system knowledge;
+2. calculates `2 × 2` determinants manually and with NumPy;
+3. interprets determinant magnitude, sign and zero geometrically;
+4. predicts invertibility and rank;
+5. calculates and verifies an inverse;
+6. applies and reverses a transformation;
+7. catches the failure produced by attempting to invert a singular matrix;
+8. distinguishes unique, infinite and absent solutions;
+9. solves and verifies one full-rank linear system.
+
+### Independent work completed
+
+- Correctly calculated the determinants of all three matrices manually.
+- Correctly predicted which matrices were invertible and singular.
+- Connected determinant zero with rank loss and collapse onto a lower-dimensional subspace.
+- Correctly interpreted determinant magnitude as area scaling in two dimensions.
+- Correctly interpreted a negative determinant as reversing orientation.
+- Calculated an inverse with `np.linalg.inv()`.
+- Multiplied a matrix and its inverse in both orders.
+- Applied a transformation to a vector and recovered the original vector with the inverse.
+- Predicted and caught `np.linalg.LinAlgError` for the singular matrix.
+- Solved a full-rank system with `np.linalg.solve()`.
+- Verified reconstructed values with `np.allclose()`.
+- Correctly revised the singular-system classification to infinitely many solutions for a target in the column span and no solution for a target outside it.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Retrieval design | A retrieval question incorrectly tested invertibility before it had been taught; it was removed from scoring | The learning sequence placed new material inside retrieval | Plan corrected |
+| Singular systems | Corrected the claim that one reachable target had a unique solution | A dependent system can have infinitely many coefficient vectors | Corrected |
+| `np.allclose()` | Identified that the third positional argument was being treated as `rtol`, not as a third comparison array | Function signature was not checked | Corrected |
+| Inverse verification | Compared `A @ A_inverse` and `A_inverse @ A` separately with the identity matrix | The intended verification was conceptually right but coded incorrectly | Corrected |
+| Output-space wording | Replaced “outputs lie in `R¹`” with “outputs lie on a one-dimensional subspace within `R²`” | Ambient space and subspace dimension were being conflated | Corrected |
+| Inverse versus solve | Clarified that an inverse reverses `A` generally, while `solve` finds one particular `x` for `A @ x = b` | The two operations were being described as the same task | Corrected |
+| Determinant magnitude | Removed “length scaling” from the general determinant interpretation | Determinants scale area, volume or `n`-dimensional volume, not each individual length | Corrected |
+| Orientation | Refined the sign interpretation from reversing an individual vector to reversing the orientation of the space or basis | Geometric wording required greater precision | Corrected |
+
+### Strengths demonstrated
+
+- Manual arithmetic and NumPy outputs agreed.
+- Rank, determinant, span and invertibility were connected rather than memorised separately.
+- Errors were corrected by revisiting the geometry of the column space.
+- The singular-matrix exception was anticipated and handled without stopping the notebook.
+- The distinction between one solution, infinitely many solutions and no solution was understood after correction.
+- Feedback was challenged when the session design tested untaught material.
+- Corrections were applied incrementally without replacing the original work.
+
+### Weak points and recurring issues
+
+1. Function signatures should be checked before using additional positional arguments.
+2. A target being reachable does not imply a unique coefficient vector when columns are dependent.
+3. Ambient vector space and the dimension of a subspace need to be stated separately.
+4. Written descriptions of transformations are often less precise than the calculations.
+5. Proofreading is still needed after the mathematical work is complete.
+
+### Reproduction status
+
+- Manual `2 × 2` determinant: Yes.
+- `np.linalg.det()` and determinant interpretation: Likely yes.
+- Rank–determinant–invertibility relationship: Yes.
+- `np.linalg.inv()` and identity verification: Likely yes.
+- Applying and undoing a transformation: Yes.
+- Catching `np.linalg.LinAlgError`: Partial; retrieve once.
+- Unique/infinite/no-solution classification: Yes conceptually; test again on a new matrix.
+- `np.linalg.solve()` and `np.allclose()` verification: Likely yes.
+
+### Short no-AI retrieval check
+
+1. Calculate the determinant of a new `2 × 2` matrix manually.
+2. Predict rank and invertibility from the determinant.
+3. Explain why determinant zero means information has been lost.
+4. Verify an inverse using an identity matrix and `np.allclose()`.
+5. Classify two targets for a new singular system as having infinitely many or no solutions.
+6. Explain why an invertible square matrix gives one unique solution for every compatible target.
+
+### Session reflection
+
+**Most important thing learned:**  
+For a square matrix, determinant, rank, invertibility and the number of solutions are different views of the same underlying question: whether the transformation preserves every dimension.
+
+**Recurring error or misconception:**  
+The main error was treating one known solution to a dependent system as proof of uniqueness.
+
+**First task next:**  
+Study orthogonality, normalisation, vector projections, residuals and projection matrices.
+
+---
+
+## Entry 010 — Orthogonality, Vector Projections and Projection Matrices
+
+**Date:** 6 August 2026  
+**Plan stage:** Week 3 — linear algebra foundations  
+**Status:** Completed after review and corrections  
+**Overall confidence:** Green for projection calculations and interpretation; Amber for independent plotting syntax
+
+### Tasks
+
+Create a connected notebook that:
+
+1. retrieves dot products, norms, rank, determinants and inverse-versus-solve knowledge;
+2. defines orthogonality, unit vectors, normalisation and projection;
+3. identifies an orthogonal vector pair;
+4. normalises a vector;
+5. decomposes a vector into its projection and residual;
+6. verifies reconstruction and residual orthogonality;
+7. constructs and analyses a projection matrix;
+8. projects a collection of points;
+9. verifies every residual and reconstruction in batch;
+10. visualises original points, projected points, the projection line and connecting residual segments.
+
+### Independent work completed
+
+- Retrieved all five prerequisite concepts correctly.
+- Correctly calculated a zero dot product and identified orthogonal vectors.
+- Correctly predicted and verified a vector norm and normalised shape.
+- Normalised the projection direction and verified unit norm.
+- Calculated a vector projection directly from the formula.
+- Calculated the residual and verified `projection + residual == original`.
+- Verified that the residual had zero dot product with the projection direction.
+- Compared the norms of the original vector, projection and residual geometrically.
+- Constructed a projection matrix using the outer product of a unit vector.
+- Verified that matrix projection matched the direct vector formula.
+- Verified idempotence, `P @ P = P`.
+- Verified symmetry, `P.T = P`.
+- Projected six observation rows in one matrix operation.
+- Verified batch residual orthogonality and reconstruction.
+- Created a labelled plot with original points, projected points, the projection line and connecting residual segments.
+- Explained the information discarded by projection.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Vector versus scalar projection | Corrected the statement that the vector-projection formula returns a scalar | Scalar component and vector projection were conflated | Corrected |
+| Projection-matrix condition | Added that `P = u uᵀ` requires `u` to be a unit vector | The normalisation condition was omitted | Corrected |
+| General projection matrix | Clarified the equivalent formula `P = vvᵀ / (vᵀv)` for a non-unit direction | Unit and non-unit forms needed connecting | Understood |
+| Residual orthogonality | Derived why subtracting the parallel component leaves a zero dot product with the projection direction | The property was initially treated as true by definition | Corrected |
+| Connecting segments | Gave a structural hint using paired original and projected coordinates rather than complete plotting code | Matplotlib segment plotting was new | Implemented |
+| Projection verification | Explained that each connecting segment is the residual and is perpendicular because its dot product with the direction is zero | Plot geometry needed linking back to the numerical check | Corrected |
+| Idempotence notation | Standardised the explanation to column-vector convention: `P(Pa) = (P²)a = Pa` | Row- and column-vector conventions were mixed | Corrected |
+| Symmetry explanation | Completed the definition that transposition leaves a symmetric matrix unchanged | The written answer ended before the conclusion | Corrected |
+| Verification reflection | Distinguished numerical verification checks from the plot as a learning aid | The answer named the visual extension rather than a check | Corrected |
+
+### Strengths demonstrated
+
+- The Python implementation was correct before most wording feedback.
+- Direct and matrix-based projection methods were compared successfully.
+- Mathematical properties were tested numerically rather than accepted without evidence.
+- Vector operations were extended from one vector to a full matrix of observation rows.
+- The optional visualisation was completed despite Matplotlib still being new.
+- The plot was interpreted using projection, residual and orthogonality rather than only appearance.
+- Hints were sufficient for completing unfamiliar plotting syntax.
+- Written explanations improved substantially through revision.
+
+### Weak points and recurring issues
+
+1. Mathematical objects with closely related names—scalar projection and vector projection—need explicit type checking.
+2. Formula assumptions, such as a direction vector being normalised, should be stated.
+3. Row-vector and column-vector conventions must not be mixed in one derivation.
+4. Formal explanations often need one more step after the computational result is correct.
+5. Matplotlib syntax is still reference-dependent.
+6. Proofreading remains the final recurring issue after technically correct work.
+
+### Diagnostic outcome
+
+**I can already:** calculate and interpret orthogonality, normalise vectors, decompose a vector into projection and residual, construct a one-dimensional projection matrix, verify its symmetry and idempotence, project many row observations, and interpret discarded information geometrically.
+
+**I need to refresh:** the distinction between scalar and vector projection, the unit-vector assumption in `P = u uᵀ`, the algebra proving residual orthogonality, and Matplotlib syntax for multi-element geometric plots.
+
+**I cannot yet:** independently generalise projection matrices to arbitrary multi-dimensional subspaces, derive least squares, or connect projection to PCA without the upcoming eigenvalue and covariance work.
+
+### Reproduction status
+
+- Orthogonality from a dot product: Yes.
+- Vector normalisation: Yes.
+- Direct projection formula: Likely yes.
+- Projection–residual decomposition: Yes.
+- Residual-orthogonality verification: Yes.
+- `np.outer()` projection matrix: Likely yes.
+- Symmetry and idempotence checks: Yes conceptually.
+- Batch projection of row observations: Likely yes.
+- Matplotlib visualisation from memory: Partial; hints were needed.
+- Full explanation of the residual proof: Partial; retrieve once without notes.
+
+### Short no-AI retrieval check
+
+1. Distinguish scalar projection from vector projection.
+2. Normalise a new non-zero vector and verify its norm.
+3. Calculate a projection and residual using new values.
+4. Prove algebraically that the residual is orthogonal to the direction vector.
+5. Construct a projection matrix from a unit direction and verify `P² = P` and `Pᵀ = P`.
+6. Project a small matrix of row observations and verify all residual dot products at once.
+7. Explain what information a one-dimensional projection removes.
+
+### Session reflection
+
+**Most important thing learned:**  
+Projection separates each vector into a component inside the chosen subspace and an orthogonal residual containing the discarded information.
+
+**Recurring error or misconception:**  
+The main conceptual issue was distinguishing a scalar component from the projected vector and consistently stating whether the direction vector had unit length.
+
+**First task next:**  
+Learn eigenvalues, eigenvectors and covariance, then complete a larger two- to three-hour PCA-from-scratch notebook.
+
+---

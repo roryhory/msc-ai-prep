@@ -318,11 +318,18 @@ results.mean(axis=1)  # removes the column axis -> one value per row
 |---|---|---|---|
 | `np.dot(a, b)` | Calculates a dot product for one-dimensional vectors by multiplying corresponding components and summing the products. | `np.dot(np.array([2, 1]), np.array([-1, 3]))` returns one scalar. | Secure |
 | `a @ b` | Performs matrix multiplication using NumPy's shape rules. | `(m, n) @ (n, p)` produces shape `(m, p)`; `(m, n) @ (n,)` produces shape `(m,)`. | Secure |
-| `np.linalg` | NumPy namespace containing common linear-algebra functions. | Includes `norm`, `solve` and `matrix_rank`. | Review |
+| `np.linalg` | NumPy namespace containing common linear-algebra functions. | Includes `norm`, `solve`, `matrix_rank`, `det` and `inv`. | Review |
 | `np.linalg.norm()` | Calculates a vector or matrix norm; for a one-dimensional vector, the default is its Euclidean magnitude. | `np.linalg.norm(np.array([3, 4]))` returns `5.0`. | Secure |
-| `np.linalg.solve()` | Solves a square linear system `A @ x = b` when `A` has a unique solution. | `coefficients = np.linalg.solve(matrix, target)` | Review |
-| `np.linalg.matrix_rank()` | Returns the number of linearly independent rows or columns represented by a matrix. | Rank 1 spans one dimension; rank 2 can span a two-dimensional plane. | Review |
-| `np.allclose()` | Tests whether numeric arrays are equal within floating-point tolerances. | `np.allclose(matrix @ coefficients, target)` | Review |
+| `np.linalg.solve()` | Solves a square linear system `A @ x = b` directly when `A` is invertible and a unique solution exists. | `coefficients = np.linalg.solve(matrix, target)` | Secure |
+| `np.linalg.matrix_rank()` | Returns the number of linearly independent rows or columns represented by a matrix. | Rank 1 spans one dimension; rank 2 can span a two-dimensional plane. | Secure |
+| `np.linalg.det()` | Calculates the determinant of a square matrix. | Use `np.isclose(determinant, 0)` when testing numerical zero. | Secure |
+| `np.linalg.inv()` | Calculates the inverse of an invertible square matrix. | Verify both `A @ A_inverse` and `A_inverse @ A` against `np.eye(n)`. | Review |
+| `np.linalg.LinAlgError` | Exception raised by NumPy linear-algebra operations when a requested result is not defined or cannot be computed. | Attempting to invert a singular matrix raises this error. | Review |
+| `np.eye()` | Creates an identity matrix. | `np.eye(2)` creates a `2 × 2` identity matrix. | Secure |
+| `np.outer(a, b)` | Calculates the outer product, producing a matrix from every pairwise product of vector components. | `np.outer(unit_b, unit_b)` constructs a one-dimensional projection matrix. | Review |
+| `np.isclose()` | Tests whether two scalar numeric values are equal within floating-point tolerances. | `np.isclose(residual @ direction, 0)` | Secure |
+| `np.allclose()` | Tests whether numeric arrays are equal within floating-point tolerances. | `np.allclose(P @ P, P)` | Secure |
+
 
 ## Combining, sorting and exporting arrays
 
@@ -502,6 +509,11 @@ group_summary = (
 | `ax.set_xlabel()` | Sets the x-axis label. | `ax.set_xlabel('Treatment')` | Review |
 | `ax.set_ylabel()` | Sets the y-axis label. | `ax.set_ylabel('Mean result')` | Review |
 | `fig.suptitle()` | Sets or clears the overall Figure title. | `fig.suptitle('')` removes pandas' automatic box-plot heading. | Review |
+| `ax.scatter()` | Draws individual observations as points. | Use separate calls for original and projected points. | Review |
+| `ax.plot()` | Draws connected line segments or continuous lines from supplied x- and y-coordinates. | Two endpoints can connect one original point to its projection. | Review |
+| `zip()` for paired plotting | Iterates through corresponding rows from two arrays together. | `for original, projected in zip(points, projected_points): ...` | Review |
+| `ax.quiver()` | Draws arrows that can represent vectors or directions. | Useful for displaying a projection direction from the origin. | New |
+| Equal axis scaling | Uses the same visual scale on the x- and y-axes so angles and lengths are not distorted. | `ax.set_aspect('equal', adjustable='box')` | Review |
 | `plt.show()` | Explicitly displays pending Matplotlib figures. | Notebooks may render the last figure automatically, but explicit display is clearer in scripts. | New |
 
 ---
@@ -516,8 +528,11 @@ group_summary = (
 | Vector | A mathematical object with components that can represent magnitude and direction; a one-dimensional NumPy array can represent one computationally. | `np.array([2, 1])` has shape `(2,)`. | Secure |
 | Vector component | One coordinate of a vector relative to a chosen basis. | For `(x, y)`, `x` and `y` are the components. | Secure |
 | Vector norm | The magnitude or length of a vector. | Euclidean norm: \(\lVert v\rVert=\sqrt{\sum_i v_i^2}\). | Secure |
+| Unit vector | A vector with norm 1. | Often written \(\hat{u}\). | Secure |
+| Normalisation | Dividing a non-zero vector by its norm to produce a unit vector in the same direction. | \(\hat{u}=u/\lVert u\rVert\). | Secure |
 | Euclidean distance | Straight-line distance between two vectors or points. | \(d(a,b)=\lVert a-b\rVert\). | Secure |
 | Dot product | Multiplies matching vector components and sums the products, producing a scalar for two one-dimensional vectors. | \(a\cdot b=\sum_i a_i b_i\). | Secure |
+| Orthogonal vectors | Non-zero vectors whose dot product is zero; geometrically, their directions are perpendicular. | \(a\cdot b=0\). | Secure |
 | Matrix | A rectangular array of numbers arranged in rows and columns. | A matrix with 2 rows and 3 columns has shape \(2 \times 3\). | Secure |
 | Matrix dimensions | Written as rows × columns. | \(A_{2\times3}B_{3\times2}\) produces a \(2\times2\) matrix. | Secure |
 | Matrix multiplication | Each output entry is the dot product of one row of the first matrix and one column of the second. | Inner dimensions must match. | Secure |
@@ -525,13 +540,33 @@ group_summary = (
 | Linear transformation | A mapping that preserves vector addition and scalar multiplication; matrices represent linear transformations once bases are chosen. | The matrix `[[2, 1], [0, 1]]` maps `(x, y)` to `(2x + y, y)`. | Secure |
 | Linear combination | A sum of vectors multiplied by scalar coefficients. | \(c_1v_1+c_2v_2+\cdots+c_kv_k\). | Secure |
 | Span | The set of every vector reachable through linear combinations of a given set of vectors. | Dependent vectors in \(\mathbb{R}^2\) may span only a line. | Secure |
-| Linear dependence | A set is dependent when a linear combination equals the zero vector using coefficients that are not all zero. | Equivalently, at least one vector is redundant and can be expressed using the others. | Review |
-| Linear independence | A set is independent when the only linear combination equal to the zero vector uses all-zero coefficients. | Independent vectors each contribute a new direction to the span. | Review |
+| Subspace | A subset of a vector space that is itself closed under vector addition and scalar multiplication. | A line through the origin is a one-dimensional subspace of \(\mathbb{R}^2\). | Review |
+| Linear dependence | A set is dependent when a linear combination equals the zero vector using coefficients that are not all zero. | Equivalently, at least one vector is redundant and can be expressed using the others. | Secure |
+| Linear independence | A set is independent when the only linear combination equal to the zero vector uses all-zero coefficients. | Independent vectors each contribute a new direction to the span. | Secure |
 | Basis | A linearly independent set of vectors that spans a vector space. | A basis contains no redundant vectors. | Secure |
 | Basis equivalence in finite dimensions | For exactly `n` vectors in an `n`-dimensional space, independence, spanning the space, forming a basis and the column matrix having rank `n` are equivalent statements. | Rank `n` is a consequence or equivalent test, not an additional third requirement. | Secure |
 | Rank | The number of linearly independent columns or rows of a matrix; equivalently, the dimension spanned by its columns. | A `2 × 2` matrix has rank 2 when its columns span the plane. | Secure |
-| Full rank | A matrix has the largest rank possible for its dimensions. | A square `n × n` matrix is full rank when its rank is `n`. | Review |
+| Full rank | A matrix has the largest rank possible for its dimensions. | A square `n × n` matrix is full rank when its rank is `n`. | Secure |
 | Linear system | A set of linear equations solved simultaneously. | `A @ x = b`; a square full-rank `A` has a unique solution. | Secure |
+| Determinant | A scalar associated with a square matrix that describes signed area, volume or higher-dimensional volume scaling. | For `[[a, b], [c, d]]`, \(\det(A)=ad-bc\). | Secure |
+| Determinant magnitude | Absolute factor by which a transformation scales area in 2D, volume in 3D or `n`-dimensional volume generally. | \(|\det(A)|=2\) doubles area in two dimensions. | Secure |
+| Determinant sign | Indicates whether the transformation preserves or reverses orientation. | A negative determinant reverses orientation. | Secure |
+| Identity matrix | Square matrix that leaves vectors unchanged under multiplication. | \(AI=IA=A\). | Secure |
+| Inverse matrix | Matrix that reverses an invertible square transformation. | \(A^{-1}A=AA^{-1}=I\). | Secure |
+| Invertible matrix | Square matrix with an inverse; equivalently, it has non-zero determinant and full rank. | `A @ x = b` has one unique solution for every compatible `b`. | Secure |
+| Singular matrix | Square matrix without an inverse. | Its determinant is zero and its rank is below full rank. | Secure |
+| Unique solution | Exactly one coefficient vector satisfies a linear system. | For square `A`, this occurs when `A` is invertible. | Secure |
+| Infinitely many solutions | Multiple coefficient vectors satisfy the same dependent system. | Occurs when the target lies in the column span but the columns are dependent. | Secure |
+| No solution | No coefficient vector reaches the target. | Occurs when the target lies outside the column span. | Secure |
+| Scalar projection | Signed scalar component of one vector along another direction. | \(\operatorname{comp}_v(u)=\frac{u\cdot v}{\lVert v\rVert}\). | Review |
+| Vector projection | Vector component of `u` lying along the line spanned by non-zero `v`. | \(\operatorname{proj}_v(u)=\frac{u\cdot v}{v\cdot v}v\). | Secure |
+| Residual | Component left after subtracting a projection from the original vector. | \(r=u-\operatorname{proj}_v(u)\). | Secure |
+| Orthogonal decomposition | Writing a vector as a projection plus an orthogonal residual. | \(u=\operatorname{proj}_v(u)+r\), with \(r\cdot v=0\). | Secure |
+| Projection matrix | Matrix mapping vectors onto a chosen subspace. | For unit `u`, \(P=uu^T\); for non-unit `v`, \(P=vv^T/(v^Tv)\). | Review |
+| Symmetric matrix | Matrix equal to its transpose. | Orthogonal projection matrices satisfy \(P^T=P\). | Review |
+| Idempotent matrix | Matrix unchanged by multiplication by itself. | Projection matrices satisfy \(P^2=P\). | Review |
+| Column-vector convention | Vectors are multiplied on the right of a transformation matrix. | Use `P @ a`; then \(P(Pa)=(P^2)a\). | Review |
+
 
 ## Calculus
 
@@ -608,33 +643,33 @@ These are the current highest-priority glossary items to retrieve without notes:
 3. Cross-validation inside a train/test workflow.
 4. Covariance versus correlation.
 5. Partial derivatives.
-6. Formal zero-vector definitions of linear dependence and independence.
-7. Why exactly `n` independent vectors in an `n`-dimensional space automatically span that space.
-8. Rank `n` as a consequence or equivalent basis test rather than an additional requirement.
-9. Conditions required by `np.linalg.solve()`.
-10. Verifying floating-point reconstruction with `np.allclose()`.
-11. One-dimensional NumPy vectors `(n,)` versus explicit row `(1, n)` and column `(n, 1)` shapes.
-12. Exact role of a virtual environment versus a notebook kernel and `ipykernel`.
-13. Active interpreter versus current working directory.
-14. Relative paths and `Path.cwd()`.
-15. Hidden notebook state and restart-and-run-all reproducibility.
-16. Exception scope and return placement in Python.
-17. Choosing `axis=0` or `axis=1` without trial and error.
-18. Assignment versus NumPy views versus independent copies.
-19. The right-to-left NumPy broadcasting rule.
-20. Preserving intended element order through transpose, flatten and reshape.
-21. Series versus one-column DataFrame selection.
-22. `.loc` versus `.iloc`.
-23. Cleaning-order consequences and missing-data trade-offs.
-24. Named aggregation syntax.
-25. pandas index versus normal data columns.
-26. MultiIndex columns produced by multiple grouped aggregations.
-27. `plt.subplots()` and the Figure/Axes distinction.
-28. Histogram bins and plot labelling.
-29. Observation-level versus aggregated data for grouped plots.
-30. Sampling variability versus “eliminating randomness.”
-31. Association versus causation.
-32. Confounding and its effect on interpretation.
+6. One-dimensional NumPy vectors `(n,)` versus explicit row `(1, n)` and column `(n, 1)` shapes.
+7. Active interpreter versus current working directory.
+8. Hidden notebook state and restart-and-run-all reproducibility.
+9. Assignment versus NumPy views versus independent copies.
+10. The right-to-left NumPy broadcasting rule.
+11. Preserving intended element order through transpose, flatten and reshape.
+12. Series versus one-column DataFrame selection.
+13. `.loc` versus `.iloc`.
+14. Cleaning-order consequences and missing-data trade-offs.
+15. Named aggregation syntax.
+16. pandas index versus normal data columns.
+17. MultiIndex columns produced by multiple grouped aggregations.
+18. `plt.subplots()` and the Figure/Axes distinction.
+19. Matplotlib syntax for scatter points, direction lines, arrows and connecting segments.
+20. Observation-level versus aggregated data for grouped plots.
+21. Sampling variability versus “eliminating randomness.”
+22. Association versus causation.
+23. Confounding and its effect on interpretation.
+24. `np.linalg.LinAlgError` handling for singular operations.
+25. Classifying unique, infinite and absent solutions on a fresh singular system.
+26. The distinction between a scalar projection and a vector projection.
+27. The unit-vector condition in \(P=uu^T\).
+28. Deriving \(r\cdot v=0\) from the projection formula.
+29. Why projection matrices are symmetric and idempotent.
+30. Consistent row-vector versus column-vector notation.
+31. Generalising a line projection to projection onto a higher-dimensional subspace.
+32. Eigenvalues, eigenvectors and covariance before the PCA project.
 
 ---
 
