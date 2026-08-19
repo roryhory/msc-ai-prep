@@ -1,0 +1,27 @@
+# Virtual environment
+.venv/
+
+# Python cache / compiled files
+__pycache__/
+*.py[cod]
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# pytest cache
+.pytest_cache/
+
+# Coverage files
+.coverage
+htmlcov/
+
+# Environment / secret files
+.env
+.env.*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# VS Code local workspace settings
+.vscode/

@@ -1035,3 +1035,264 @@ The main conceptual issue was distinguishing a scalar component from the project
 Learn eigenvalues, eigenvectors and covariance, then complete a larger two- to three-hour PCA-from-scratch notebook.
 
 ---
+
+---
+
+## Entry 011 — Eigenvalues, Eigenvectors and Covariance
+
+**Date:** 11 August 2026  
+**Plan stage:** Week 3 — linear algebra foundations  
+**Status:** Completed after review and corrections  
+**Overall confidence:** Green for computing and interpreting eigenpairs and covariance; Review for precise geometric wording
+
+### Tasks
+
+Create a connected notebook that:
+
+1. retrieves prior vector, matrix, projection and linear-system knowledge;
+2. introduces eigenvectors and eigenvalues through direct matrix transformations;
+3. tests candidate vectors against the eigenvector equation;
+4. compares directions with different eigenvalue magnitudes;
+5. calculates covariance manually from centred observations;
+6. constructs and interprets a covariance matrix;
+7. eigendecomposes a covariance matrix;
+8. connects covariance-matrix eigenvectors with directions of variance;
+9. connects covariance-matrix eigenvalues with the amount of variance along those directions;
+10. visualises the principal eigenvector directions over centred data.
+
+### Independent work completed
+
+- Correctly used the defining relationship \(Av=\lambda v\) to identify eigenvectors.
+- Correctly recognised that a non-eigenvector is mapped outside its original span.
+- Used `np.linalg.eig()` and interpreted eigenvectors as matrix columns corresponding to eigenvalues.
+- Compared transformations with eigenvalues greater than and less than one.
+- Centred observations by subtracting feature means.
+- Calculated sample covariance manually and matched the result from `np.cov(..., rowvar=False)`.
+- Interpreted diagonal covariance-matrix entries as feature variances and off-diagonal entries as pairwise covariance.
+- Recognised that covariance matrices are symmetric.
+- Eigendecomposed a covariance matrix and identified the dominant eigenvector direction.
+- Connected a covariance-matrix eigenvalue with the amount of variance along its corresponding eigenvector direction.
+- Learned that an eigenvector and its negative represent the same axis.
+- Scaled plotted eigenvectors by the square root of their eigenvalues to make relative spread visible.
+- Completed the initially skipped centred-data covariance section before moving on.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Non-eigenvector wording | Confirmed that saying the transformed vector lies outside the original span is conceptually correct for a non-zero non-eigenvector | The original wording was valid but needed a more precise statement | Understood |
+| Eigenvalue interpretation | Corrected the description of a covariance eigenvalue to “variance along the corresponding eigenvector direction” | Eigenvalues were initially described too vaguely | Corrected |
+| Smaller eigenvector | Replaced “variables do not vary together” with “orthogonal direction containing less variance” | Covariance and directional variance were being conflated | Corrected |
+| Eigenvector sign | Explained that \(v\) and \(-v\) represent the same eigenvector axis | Sign differences between implementations could otherwise look like disagreement | Understood |
+| Covariance magnitude | Removed the idea that covariance above 1 is generally “strong” | Covariance depends on units and has no universal magnitude threshold | Corrected |
+| Symmetric eigensolver | Introduced `np.linalg.eigh()` as the preferred NumPy eigensolver for real symmetric covariance matrices | `np.linalg.eig()` works more generally but does not exploit covariance symmetry | Understood |
+| Plot scaling | Explained why scaling eigenvectors by \(\sqrt{\lambda}\) gives a length proportional to standard deviation along the direction | Eigenvalue magnitude needed linking to geometric spread | Corrected |
+| Section completion | Flagged that the centred-data covariance section had been skipped | A required conceptual bridge was missing | Completed |
+
+### Strengths demonstrated
+
+- The eigenvector equation was understood geometrically rather than treated only as a numerical test.
+- The relationship between centring, covariance and directional variance was built from manual calculations.
+- Mathematical wording was challenged when a correction was too broad.
+- NumPy eigenvector column conventions were handled correctly.
+- Sign ambiguity was understood without treating opposite orientations as different principal directions.
+- Plotting was used to connect numerical eigenpairs to data geometry.
+- Covariance calculations and NumPy output were checked against one another.
+
+### Weak points and recurring issues
+
+1. Closely related ideas—covariance between variables and variance along an eigenvector—need to be kept distinct.
+2. Covariance magnitude cannot be interpreted with a universal numerical threshold because it depends on units.
+3. Mathematical explanations are usually correct in direction but sometimes need more exact language about spans, axes and variance.
+4. `np.linalg.eigh()` versus `np.linalg.eig()` should be selected based on matrix structure rather than habit.
+5. Eigenvector sign ambiguity needs to be remembered when comparing implementations.
+
+### Diagnostic outcome
+
+**I can already:** identify eigenvectors from the defining equation, calculate and interpret covariance, build a covariance matrix, eigendecompose it, and connect its eigenpairs to directions and amounts of variance.
+
+**I need to refresh:** why covariance matrices are symmetric, why `eigh()` is preferred for symmetric matrices, and the exact distinction between covariance of original features and variance along an eigenvector direction.
+
+**I cannot yet:** independently derive the complete PCA workflow from these pieces without guidance.
+
+### Reproduction status
+
+- Eigenvector/eigenvalue definition: Yes.
+- Candidate-eigenvector testing: Yes.
+- `np.linalg.eig()` output interpretation: Likely yes.
+- Manual sample covariance: Likely yes.
+- Centring before covariance: Yes.
+- `np.cov(..., rowvar=False)`: Likely yes.
+- Covariance-matrix symmetry: Yes conceptually.
+- Covariance eigenvalue as directional variance: Likely yes; retrieve once.
+- Eigenvector sign ambiguity: Yes.
+- Plotting eigenvectors scaled by \(\sqrt{\lambda}\): Partial; syntax may need reference.
+
+### Short no-AI retrieval check
+
+1. State the eigenvector equation and explain what it means geometrically.
+2. Explain what makes a vector a non-eigenvector.
+3. Centre a small two-feature dataset and calculate one covariance manually.
+4. Explain every position in a `2 × 2` covariance matrix.
+5. Explain why covariance-matrix eigenvectors identify special directions in the data.
+6. Explain what the corresponding eigenvalue measures.
+7. Explain why \(v\) and \(-v\) represent the same principal axis.
+8. Choose between `np.linalg.eig()` and `np.linalg.eigh()` for a covariance matrix and explain why.
+
+### Session reflection
+
+**Most important thing learned:**  
+For a covariance matrix, eigenvectors identify directions through feature space and the corresponding eigenvalues quantify how much the centred data varies along those directions.
+
+**Recurring error or misconception:**  
+The main conceptual issue was keeping covariance between original variables separate from variance measured along an eigenvector direction.
+
+**First task next:**  
+Build PCA from scratch by centring data, eigendecomposing its covariance matrix, sorting components, projecting observations and reconstructing them.
+
+
+
+---
+
+## Entry 012 — PCA from Scratch
+
+**Date:** 11 August 2026  
+**Plan stage:** Week 3 — linear algebra foundations / first dimensionality-reduction project  
+**Status:** Completed after review, debugging and refactoring  
+**Overall confidence:** Green for the end-to-end PCA workflow; Review for the formal change-of-basis explanation and environment/kernel management
+
+### Tasks
+
+Build PCA manually without using scikit-learn until the final comparison:
+
+1. generate a correlated three-feature dataset;
+2. inspect shapes, feature statistics and pairwise relationships;
+3. centre the dataset;
+4. calculate the covariance matrix manually;
+5. eigendecompose the covariance matrix;
+6. sort eigenvalues and eigenvectors into descending principal-component order;
+7. calculate explained-variance ratios and cumulative explained variance;
+8. select principal components and project the data;
+9. verify the covariance structure of the transformed coordinates;
+10. reconstruct observations from a reduced representation;
+11. compare one-, two- and three-component reconstruction;
+12. refactor the workflow into reusable fit, transform and inverse-transform functions;
+13. compare the implementation against `sklearn.decomposition.PCA`;
+14. explain the mathematical meaning, trade-offs and limitations of PCA.
+
+### Independent work completed
+
+- Generated a `(150, 3)` synthetic dataset whose three features shared a dominant latent factor plus noise.
+- Correctly treated rows as observations and columns as features.
+- Centred the dataset with NumPy broadcasting and verified near-zero column means.
+- Built the sample covariance matrix using \(X^TX/(n-1)\) on centred data and matched `np.cov`.
+- Used `np.linalg.eigh()` for covariance eigendecomposition.
+- Verified eigenpairs numerically using \(\Sigma v=\lambda v\).
+- Sorted eigenvalues into descending order while preserving eigenvalue/eigenvector pairing.
+- Calculated explained-variance ratios and cumulative explained variance.
+- Correctly concluded that one principal component exceeded the 90% variance threshold for this synthetic dataset.
+- Constructed the component matrix with eigenvectors as columns.
+- Projected `(150, 3)` centred observations into a `(150, 2)` PCA representation.
+- Connected each PCA column with coordinates along one principal-component direction.
+- Connected the variance of each PCA-coordinate column with its corresponding covariance eigenvalue.
+- Verified that retained principal components had approximately zero pairwise covariance.
+- Reconstructed the original feature-space observations using \(ZW^T+\mu\).
+- Understood that using fewer components makes \(WW^T\) a projection matrix rather than the identity.
+- Compared reconstruction with one, two and three components and observed reconstruction error approaching numerical zero with all components retained.
+- Refactored PCA into `fit_pca()`, `transform_pca()` and `inverse_transform_pca()`.
+- Replaced a manual nested-loop eigenpair arrangement with NumPy index-based sorting using `np.argsort()`.
+- Compared the manual implementation with scikit-learn and obtained matching explained variances, explained-variance ratios, transformed data after sign alignment, and reconstructions.
+- Identified eigenvector sign flips as equivalent orientations rather than errors.
+- Diagnosed a Jupyter/PowerShell environment mismatch using `sys.executable`.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Explained variance ratio | Clarified that \(\lambda_i/\sum_j\lambda_j\) compares one principal-direction variance with total variance across all principal directions | The summation index was initially interpreted as referring to original features | Corrected |
+| PCA coordinates | Used a geometric example to show that each `X_pca` column contains observation coordinates along one principal axis | Matrix multiplication was understood mechanically before its geometric meaning was fully connected | Understood |
+| PC variance and eigenvalue | Derived and visualised why the variance of `X_pca[:, i]` equals \(\lambda_i\) | Two correct facts had not yet been connected as the same quantity | Understood |
+| Reconstruction | Corrected the idea of multiplying by \(W^{-1}\); for a reduced rectangular component matrix, reconstruction uses \(ZW^T\) | A non-square component matrix has no ordinary inverse | Corrected |
+| Projection interpretation | Connected \(ZW^T=X_{\text{centered}}WW^T\) with projection onto the retained principal-component subspace | Reconstruction was initially viewed only as reversing multiplication | Understood |
+| Fit / transform separation | Explained that fitting learns the mean and principal axes, while transform applies those learned quantities to observations | The responsibilities of the reusable functions were initially difficult to visualise | Understood |
+| Eigenpair construction | Replaced clunky nested loops with index-based NumPy reordering using `np.argsort(eigenvalues)[::-1]` and matching column selection | Element-by-element assignment was being used where whole-array indexing was available | Understood |
+| Function state | Identified an accidental dependency on the earlier global `sorted_eig_pairs` variable inside `fit_pca()` | Notebook state made the function appear self-contained when it was not | Corrected |
+| Eigenvalue ordering | Ensured returned eigenvalues use the same descending order as component columns | Related arrays could silently lose their correspondence | Corrected |
+| MSE | Standardised reconstruction MSE to `np.mean((X - X_reconstructed) ** 2)` | Dividing only by sample count measured mean squared error per observation rather than per scalar entry | Corrected |
+| PCA-basis covariance | Explained that expressing the same centred cloud in eigenvector coordinates gives \(W^T\Sigma W=\Lambda\), a diagonal covariance matrix | “The covariance matrix becomes diagonal” hid the change-of-basis meaning | Review |
+| scikit-learn sign comparison | Explained how independently chosen eigenvector signs can make otherwise equivalent PCA scores appear negated | Equivalent component axes can be oriented in opposite directions | Understood |
+| Environment mismatch | Diagnosed that scikit-learn was installed in `01_python/.venv` while the notebook kernel used `02_numpy_pandas/.venv` | PowerShell environment and Jupyter kernel were different interpreters | Understood; environment consolidation planned |
+
+### Strengths demonstrated
+
+- The complete PCA workflow was built from previously learned linear-algebra pieces rather than copied from a library.
+- Shape reasoning was used consistently before matrix multiplication.
+- Manual covariance, eigendecomposition, projection and reconstruction were numerically verified.
+- Questions focused on the exact conceptual joins where PCA becomes meaningful rather than only on syntax.
+- Eigenvalue/eigenvector pairing was preserved deliberately during sorting.
+- Refactoring exposed and corrected hidden notebook-state dependencies.
+- The manual implementation was successfully checked against scikit-learn.
+- A clunky but correct loop implementation was recognised as a candidate for NumPy vectorisation.
+- Dimensionality reduction was connected to orthogonal projection and information loss.
+- The difference between retaining variance and retaining an original feature was understood.
+
+### Weak points and recurring issues
+
+1. A mathematically correct formula is not yet always accompanied by an immediate geometric interpretation.
+2. “Change of basis” and “covariance becomes diagonal in the PCA basis” remain concepts to retrieve again without notes.
+3. Eigenvalues represent variances along principal directions; eigenvectors represent the directions themselves.
+4. Notebook global state can conceal dependencies inside functions unless the notebook is restarted and run cleanly.
+5. NumPy indexing patterns such as `argsort`-based reordering are not yet automatic.
+6. PCA terminology needs precision: principal-component directions, projected scores, explained variance and reconstructed observations are different objects.
+7. Python virtual environments and Jupyter kernels need a cleaner project-level setup.
+
+### Diagnostic outcome
+
+**I can already:** implement PCA manually from centred observations through covariance, eigendecomposition, sorting, explained variance, projection and reconstruction; compare different retained dimensions; package the workflow into reusable functions; and verify it against scikit-learn.
+
+**I need to refresh:** why covariance becomes diagonal in the principal-component basis, the matrix identity \(W^T\Sigma W=\Lambda\), NumPy index-based eigenpair sorting, and the distinction between a selected principal-component direction and the projected score values along that direction.
+
+**I cannot yet:** derive PCA instantly from first principles without scaffolding, or independently manage a clean repo-level virtual environment and Jupyter kernel without a setup exercise.
+
+### Reproduction status
+
+- Centring with broadcasting: Yes.
+- Manual covariance matrix: Yes.
+- Covariance eigendecomposition with `np.linalg.eigh()`: Yes.
+- Eigenpair verification: Yes.
+- Descending eigenpair sorting: Likely yes; retrieve `argsort` once.
+- Explained-variance ratio and cumulative variance: Yes conceptually.
+- Projection into PCA coordinates: Yes.
+- Explaining PC-coordinate variance equals eigenvalue: Likely yes after review.
+- PCA-basis covariance is diagonal: Partial; retrieve and explain geometrically again.
+- Reconstruction with \(ZW^T+\mu\): Yes.
+- Projection interpretation of reduced reconstruction: Yes.
+- One-/two-/three-component trade-off: Yes.
+- `fit_pca()` / `transform_pca()` / `inverse_transform_pca()`: Likely yes.
+- scikit-learn comparison and sign ambiguity: Likely yes.
+- Repo-level environment/kernel setup: Not yet; planned for the next exercise.
+
+### Short no-AI retrieval check
+
+1. Write the full PCA workflow from raw feature matrix to projected scores.
+2. Explain why centring is required before constructing covariance with \(X^TX/(n-1)\).
+3. Explain why covariance eigenvectors become principal directions and eigenvalues become directional variances.
+4. Explain why `X_centered @ W` produces coordinates in the principal-component basis.
+5. Explain why the covariance of those coordinates is diagonal.
+6. Derive \(W^T\Sigma W=\Lambda\) using \(\Sigma W=W\Lambda\) and \(W^TW=I\).
+7. Explain what is lost when one principal component is discarded.
+8. Explain why reconstruction uses \(ZW^T+\mu\) rather than \(ZW^{-1}\) for a reduced component matrix.
+9. Use `np.argsort()` indices to reorder eigenvalues and corresponding eigenvector columns.
+10. Explain why scikit-learn may return a component with the opposite sign while still agreeing mathematically.
+
+### Session reflection
+
+**Most important thing learned:**  
+PCA is a change of coordinates into orthogonal covariance-eigenvector directions, ordered by variance. Dimensionality reduction then keeps only selected coordinates, and reconstruction is projection back into the original feature space.
+
+**Recurring error or misconception:**  
+The hardest conceptual step was connecting matrix operations with geometry: a PCA column is a coordinate along a principal axis, its variance is the matching eigenvalue, and the covariance matrix is diagonal only after expressing the data in that eigenvector basis.
+
+**First task next:**  
+Set up one repository-level virtual environment and Jupyter kernel, then continue the preparation plan with the next exercise using that environment consistently.
+

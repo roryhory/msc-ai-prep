@@ -193,6 +193,9 @@ if parsed_date.strftime("%Y-%m-%d") != value:
 | Relative path | A path interpreted from the current working directory rather than from a fixed drive root. | `../data/results.csv` goes up one directory before entering `data`. | Review |
 | Absolute path | A complete path beginning from a drive or filesystem root. | Useful for diagnosis but less portable between computers. | Review |
 | Kernel compatibility | Whether the selected kernel package versions work correctly with the notebook client and extensions. | Pinning `ipykernel<7` resolved repeated `Run All` hangs in this environment. | Review |
+| `%pip` | IPython/Jupyter magic that runs pip in the environment associated with the current notebook kernel. | `%pip install scikit-learn` helps avoid installing a package into a different interpreter. | Review |
+| Package name versus import name | A package can have a different installation name and Python import name. | Install `scikit-learn`; import with `from sklearn.decomposition import PCA`. | Review |
+| Kernel/interpreter mismatch | The terminal can use one virtual environment while a notebook kernel executes another interpreter. | Compare `sys.executable` in the notebook with `python -c "import sys; print(sys.executable)"` in the terminal. | Review |
 
 ## Virtual environment commands
 
@@ -329,6 +332,10 @@ results.mean(axis=1)  # removes the column axis -> one value per row
 | `np.outer(a, b)` | Calculates the outer product, producing a matrix from every pairwise product of vector components. | `np.outer(unit_b, unit_b)` constructs a one-dimensional projection matrix. | Review |
 | `np.isclose()` | Tests whether two scalar numeric values are equal within floating-point tolerances. | `np.isclose(residual @ direction, 0)` | Secure |
 | `np.allclose()` | Tests whether numeric arrays are equal within floating-point tolerances. | `np.allclose(P @ P, P)` | Secure |
+| `np.linalg.eig()` | Computes eigenvalues and right eigenvectors of a general square matrix. | Eigenvector `i` is stored in column `eigenvectors[:, i]` and corresponds to `eigenvalues[i]`. | Review |
+| `np.linalg.eigh()` | Computes eigenvalues and eigenvectors of a real symmetric or complex Hermitian matrix. | Preferred for covariance matrices; eigenvalues are returned in ascending order. | Review |
+| `np.cov(..., rowvar=False)` | Calculates a covariance matrix when rows are observations and columns are variables. | `np.cov(X, rowvar=False)` gives one covariance-matrix row/column per feature. | Review |
+| `np.sqrt()` | Applies the square-root operation element-wise to an array. | `np.sqrt(eigenvalues)` converts variance magnitudes into standard-deviation scales. | Review |
 
 
 ## Combining, sorting and exporting arrays
@@ -336,7 +343,7 @@ results.mean(axis=1)  # removes the column axis -> one value per row
 | Function / syntax | Definition | Example / note | Status |
 |---|---|---|---|
 | `np.column_stack()` | Stacks one-dimensional arrays as columns in a new 2D array. | `np.column_stack((u, v))` forms a matrix whose columns are the vectors. | Review |
-| `np.argsort()` / `.argsort()` | Returns indices that would sort an array; those indices can reorder complete rows. | `summary[summary[:, 1].argsort()]` | Review |
+| `np.argsort()` / `.argsort()` | Returns indices that would sort an array; the same indices can reorder related rows or columns while preserving correspondence. | `idx = np.argsort(eigenvalues)[::-1]`; then `eigenvalues[idx]` and `eigenvectors[:, idx]`. | Review |
 | `np.savetxt()` | Saves a NumPy array to a text file. | `np.savetxt('summary.csv', data, delimiter=',')` | Review |
 | `fmt` | Controls number formatting in `np.savetxt()` and may specify one format per column. | `fmt=['%.0f', '%.2f']` | Review |
 | `header` | Adds a header line when using `np.savetxt()`. | `header='sample_id,mean'` | Review |
@@ -566,6 +573,16 @@ group_summary = (
 | Symmetric matrix | Matrix equal to its transpose. | Orthogonal projection matrices satisfy \(P^T=P\). | Review |
 | Idempotent matrix | Matrix unchanged by multiplication by itself. | Projection matrices satisfy \(P^2=P\). | Review |
 | Column-vector convention | Vectors are multiplied on the right of a transformation matrix. | Use `P @ a`; then \(P(Pa)=(P^2)a\). | Review |
+| Eigenvector | A non-zero vector whose direction is preserved by a linear transformation. | \(Av=\lambda v\). | Review |
+| Eigenvalue | Scalar factor associated with an eigenvector; the transformation scales that eigenvector by this amount. | In \(Av=\lambda v\), \(\lambda\) is the eigenvalue. | Review |
+| Eigenpair | A matching eigenvalue and eigenvector satisfying the eigenvector equation. | `eigenvalues[i]` corresponds to `eigenvectors[:, i]`. | Review |
+| Eigenvector sign ambiguity | If \(v\) is an eigenvector, then \(-v\) represents the same eigenvector axis and is also an eigenvector for the same eigenvalue. | PCA implementations may return opposite signs without disagreeing. | Review |
+| Diagonal matrix | A square matrix whose off-diagonal entries are zero. | \(\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_n)\). | Review |
+| Orthonormal vectors | Vectors that are mutually orthogonal and each have norm 1. | For an orthonormal component matrix \(W\), \(W^TW=I\). | Review |
+| Change of basis | Expressing the same vectors using coordinates measured along a different set of basis directions. | PCA changes from original feature axes to covariance-eigenvector axes. | Review |
+| Principal-component basis | The orthonormal basis formed by covariance-matrix eigenvectors, usually ordered from largest to smallest eigenvalue. | If \(Z=X_{\text{centered}}W\), columns of `Z` are coordinates in this basis. | Review |
+| Diagonalisation of covariance in the PC basis | Expressing covariance in its orthonormal eigenvector basis removes cross-covariance terms. | \(W^T\Sigma W=\Lambda\), where \(\Lambda\) is diagonal. | Review |
+| Positive semidefinite matrix | A symmetric matrix satisfying \(x^TAx\ge0\) for every vector \(x\). | Covariance matrices are positive semidefinite, so their eigenvalues are non-negative apart from tiny numerical error. | New |
 
 
 ## Calculus
@@ -592,6 +609,8 @@ group_summary = (
 | Variance | Average squared distance of values from their mean. | Units are squared. | Review |
 | Standard deviation | Square root of variance, returning to the original units. | \(\sigma=\sqrt{\mathrm{Var}(X)}\) | Review |
 | Covariance | Measures whether two variables tend to deviate from their means in the same or opposite directions. | Positive: move together; negative: move oppositely. | Review |
+| Covariance matrix | Square matrix containing feature variances on the diagonal and pairwise covariances off the diagonal. | For centred \(X\), sample covariance is \(\Sigma=X^TX/(n-1)\). | Review |
+| Covariance-matrix symmetry | Pairwise covariance is unchanged by swapping the two variables, so the covariance matrix equals its transpose. | \(\operatorname{Cov}(x,y)=\operatorname{Cov}(y,x)\), hence \(\Sigma^T=\Sigma\). | Review |
 | Correlation | Standardised covariance, ranging from \(-1\) to \(1\). It is unitless. | \(\rho=\frac{\mathrm{Cov}(X,Y)}{\sigma_X\sigma_Y}\) | Review |
 
 
@@ -608,6 +627,21 @@ group_summary = (
 | Test data | Untouched data used once after model selection to estimate final generalisation performance. | Also called a holdout set. | Review |
 | Parameter | A value learned from training data. | Examples: regression weights, neural-network weights. | New |
 | Hyperparameter | A setting chosen outside the low-level fitting process. | Examples: tree depth, regularisation strength, number of layers. | Review |
+| Principal component analysis (PCA) | Linear dimensionality-reduction method that changes coordinates to orthogonal directions of decreasing variance. | Centre data, eigendecompose covariance, sort eigenpairs, project onto selected eigenvectors. | Review |
+| Principal component direction | A covariance-matrix eigenvector used as a new axis through feature space. | PC1 is the eigenvector with the largest eigenvalue. | Review |
+| PCA score / projected coordinate | An observation's coordinate along a principal-component direction. | `Z = X_centered @ W`; column `Z[:, i]` contains scores along PC `i`. | Review |
+| Components matrix \(W\) | Matrix whose columns are selected orthonormal principal-component directions in the manual column-vector convention. | With 3 features and 2 retained PCs, `W.shape == (3, 2)`. | Review |
+| Explained variance | Variance of the centred data along one principal-component direction. | For covariance PCA, explained variance of PC \(i\) is its eigenvalue \(\lambda_i\). | Review |
+| Explained-variance ratio | Fraction of total variance captured by one principal component. | \(\lambda_i/\sum_j\lambda_j\). | Review |
+| Cumulative explained variance | Total explained-variance ratio captured by the first \(k\) ordered components. | Used to choose the minimum number of PCs meeting a variance threshold. | Review |
+| Dimensionality reduction | Representing observations with fewer coordinates than the original feature count. | PCA maps `(n, d)` data to `(n, k)` scores with \(k<d\). | Review |
+| PCA reconstruction | Approximate mapping from retained PCA scores back into the original feature space. | \(X_{\text{reconstructed}}=ZW^T+\mu\). | Review |
+| PCA reconstruction error | Difference between original observations and their reconstruction after discarded PC directions are removed. | Element-wise MSE: `np.mean((X - X_reconstructed) ** 2)`. | Review |
+| PCA fit | Learns the training-data mean, principal directions and explained variances. | Do not refit merely to transform new observations into the existing PCA coordinate system. | Review |
+| PCA transform | Centres observations using the learned mean and projects them onto learned principal directions. | \(Z=(X-\mu)W\). | Review |
+| PCA inverse transform | Maps PCA scores back through retained component directions and restores the learned mean. | \(X_{\text{reconstructed}}=ZW^T+\mu\). | Review |
+| PCA scale sensitivity | Covariance-based PCA is affected by feature units and numerical scales. | Standardisation may be appropriate when scale differences should not determine component importance. | Review |
+| PCA linearity limitation | PCA learns linear combinations of original features and therefore may miss important nonlinear structure. | A curved low-dimensional manifold may not be represented efficiently by a few linear PCs. | New |
 | Generalisation | Performance on new, unseen data drawn from the intended population. | Central aim of predictive modelling. | Review |
 | Overfitting | Learning patterns or noise specific to training data that do not generalise. | Often high training performance and weaker validation performance. | Secure |
 | Underfitting | A model is too simple or insufficiently trained to capture relevant patterns. | Poor performance on both training and validation data. | New |
@@ -638,38 +672,51 @@ group_summary = (
 
 These are the current highest-priority glossary items to retrieve without notes:
 
-1. Precision versus recall.
-2. Validation set versus final test set.
-3. Cross-validation inside a train/test workflow.
-4. Covariance versus correlation.
-5. Partial derivatives.
-6. One-dimensional NumPy vectors `(n,)` versus explicit row `(1, n)` and column `(n, 1)` shapes.
-7. Active interpreter versus current working directory.
-8. Hidden notebook state and restart-and-run-all reproducibility.
-9. Assignment versus NumPy views versus independent copies.
-10. The right-to-left NumPy broadcasting rule.
-11. Preserving intended element order through transpose, flatten and reshape.
-12. Series versus one-column DataFrame selection.
-13. `.loc` versus `.iloc`.
-14. Cleaning-order consequences and missing-data trade-offs.
-15. Named aggregation syntax.
-16. pandas index versus normal data columns.
-17. MultiIndex columns produced by multiple grouped aggregations.
-18. `plt.subplots()` and the Figure/Axes distinction.
-19. Matplotlib syntax for scatter points, direction lines, arrows and connecting segments.
-20. Observation-level versus aggregated data for grouped plots.
-21. Sampling variability versus “eliminating randomness.”
-22. Association versus causation.
-23. Confounding and its effect on interpretation.
-24. `np.linalg.LinAlgError` handling for singular operations.
-25. Classifying unique, infinite and absent solutions on a fresh singular system.
-26. The distinction between a scalar projection and a vector projection.
-27. The unit-vector condition in \(P=uu^T\).
-28. Deriving \(r\cdot v=0\) from the projection formula.
-29. Why projection matrices are symmetric and idempotent.
-30. Consistent row-vector versus column-vector notation.
-31. Generalising a line projection to projection onto a higher-dimensional subspace.
-32. Eigenvalues, eigenvectors and covariance before the PCA project.
+1. Why covariance-matrix eigenvectors represent directions of variance.
+2. Why the corresponding eigenvalues equal the variances of PCA score columns.
+3. What “change of basis” means geometrically.
+4. Why the covariance matrix of PCA scores is diagonal.
+5. Deriving \(W^T\Sigma W=\Lambda\) from \(\Sigma W=W\Lambda\) and \(W^TW=I\).
+6. Principal-component direction versus PCA score / projected coordinate.
+7. Explained variance versus explained-variance ratio versus cumulative explained variance.
+8. Why reduced reconstruction uses \(ZW^T+\mu\) and represents projection onto the retained subspace.
+9. Eigenvector sign ambiguity when comparing PCA implementations.
+10. Reordering related NumPy arrays with one `np.argsort()` index array.
+11. `np.linalg.eig()` versus `np.linalg.eigh()`.
+12. Covariance versus correlation.
+13. Feature scaling and why covariance-based PCA is scale-sensitive.
+14. Fit versus transform versus inverse transform.
+15. Jupyter kernel interpreter versus terminal virtual environment.
+16. `%pip` versus terminal `python -m pip`.
+17. Restart-and-run-all reproducibility and hidden notebook state.
+18. Precision versus recall.
+19. Validation set versus final test set.
+20. Cross-validation inside a train/test workflow.
+21. Partial derivatives.
+22. One-dimensional NumPy vectors `(n,)` versus explicit row `(1, n)` and column `(n, 1)` shapes.
+23. Assignment versus NumPy views versus independent copies.
+24. The right-to-left NumPy broadcasting rule.
+25. Preserving intended element order through transpose, flatten and reshape.
+26. Series versus one-column DataFrame selection.
+27. `.loc` versus `.iloc`.
+28. Cleaning-order consequences and missing-data trade-offs.
+29. Named aggregation syntax.
+30. pandas index versus normal data columns.
+31. MultiIndex columns produced by multiple grouped aggregations.
+32. `plt.subplots()` and the Figure/Axes distinction.
+33. Matplotlib syntax for scatter points, direction lines, arrows and connecting segments.
+34. Observation-level versus aggregated data for grouped plots.
+35. Sampling variability versus “eliminating randomness.”
+36. Association versus causation.
+37. Confounding and its effect on interpretation.
+38. `np.linalg.LinAlgError` handling for singular operations.
+39. Classifying unique, infinite and absent solutions on a fresh singular system.
+40. Scalar projection versus vector projection.
+41. The unit-vector condition in \(P=uu^T\).
+42. Deriving \(r\cdot v=0\) from the projection formula.
+43. Why projection matrices are symmetric and idempotent.
+44. Consistent row-vector versus column-vector notation.
+45. Generalising a line projection to projection onto a higher-dimensional subspace.
 
 ---
 
