@@ -1296,3 +1296,351 @@ The hardest conceptual step was connecting matrix operations with geometry: a PC
 **First task next:**  
 Set up one repository-level virtual environment and Jupyter kernel, then continue the preparation plan with the next exercise using that environment consistently.
 
+---
+
+## Entry 013 — Probability Foundations
+
+**Date:** Completed by 19 August 2026  
+**Plan stage:** Probability foundations / schedule-reset prerequisite  
+**Status:** Completed after review and corrections  
+**Overall confidence:** Green for foundational probability; later probability topics remain pending
+
+### Tasks
+
+Build a probability-foundations notebook that:
+
+1. retrieves PCA and linear-algebra concepts;
+2. defines sample spaces, outcomes and events;
+3. uses union, intersection and complement notation;
+4. constructs the exact distribution of the sum of two dice;
+5. simulates repeated dice rolls with NumPy;
+6. calculates expectation and variance;
+7. distinguishes joint and conditional probability;
+8. tests dependent and independent event pairs; and
+9. completes an end-of-session conceptual check.
+
+### Independent work completed
+
+- Correctly defined sample spaces and events for a fair die.
+- Correctly calculated event intersections, unions, complements and associated probabilities.
+- Explained why the intersection is subtracted in the union formula.
+- Enumerated all 36 ordered two-dice outcomes and constructed the sum distribution.
+- Correctly identified 7 as the most likely sum and 2/12 as the least likely.
+- Simulated 100,000 two-dice rolls using NumPy.
+- Calculated the theoretical expected sum and compared it with the simulated mean.
+- Calculated variance using both the direct definition and \(E[X^2]-E[X]^2\).
+- Calculated conditional probabilities for dependent events.
+- Used Boolean masks over the enumerated dice outcomes to calculate event intersections directly.
+- Correctly tested independence using \(P(A\cap B)=P(A)P(B)\).
+- Contrasted one dependent event pair with one genuinely independent pair.
+- Completed the final conceptual retrieval check.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Exercise wording | Clarified that “find” meant identify the outcome set while “calculate” meant produce a numerical probability | Output contract was ambiguous | Understood |
+| Conditional probability | Reviewed the meaning of \(P(A\mid B)\) as restricting attention to outcomes where \(B\) occurred | Conditional probability was new notation | Understood |
+| Independence | Corrected an initially reversed written conclusion: inequality means the events are not independent | The numerical test was correct but the verbal conclusion was reversed | Corrected |
+| Independent-event intersection | Corrected \(P(C\cap D)\) by explicitly enumerating the 9 matching ordered outcomes | Intersection count was initially undercounted | Corrected |
+| Boolean masks | Showed how to convert the 36 dice outcomes to a NumPy array and calculate `C & D` directly | Set/event logic needed connecting to NumPy Boolean operations | Implemented |
+| Conditional interpretation | Refined the explanation of \(P(B\mid A)>P(B)\) by comparing the conditional first-die mean with the unrestricted mean | The original comparison used odd values rather than the even conditioned set | Corrected |
+| Random variable definition | Refined “outcomes of an event” to a mapping from outcomes in the sample space to numerical values | Formal definition needed greater precision | Corrected in later retrieval |
+| Expected value wording | Refined \(E[X]\) to the probability-weighted long-run average rather than merely restating “expected value” | Definition was initially circular | Retrieved correctly in the next calculus session |
+
+### Strengths demonstrated
+
+- Probability notation was connected to explicit outcome sets rather than memorised abstractly.
+- Exact enumeration and simulation were compared successfully.
+- NumPy Boolean masks were reused naturally from earlier scientific-Python work.
+- Conditional probability was interpreted as a change in the population being considered.
+- The independence test was understood numerically and conceptually after correction.
+- Final retrieval showed that \(P(A\mid B)\), \(P(A\cap B)\), expectation and variance were becoming usable concepts rather than isolated formulas.
+
+### Weak points and recurring issues
+
+1. Written conclusions can occasionally reverse the result of a correct numerical test.
+2. Counting intersections should be checked against the explicit outcome set when the event structure is small enough to enumerate.
+3. Expected value must be kept distinct from the most likely value (mode).
+4. Definitions are often intuitive first and need one later pass for formal precision.
+5. Probability simulations should be described as approaching theoretical values with increasing sample size, not as guaranteed to match them exactly.
+
+### Diagnostic outcome
+
+**I can already:** work with sample spaces and events; construct a discrete probability distribution; calculate expectation and variance; interpret joint and conditional probability; and test independence both mathematically and computationally.
+
+**I need to refresh:** the exact distinction between expected value and mode, formal random-variable wording, and independence/conditional-probability notation under time pressure.
+
+**I cannot yet:** claim coverage of Bayes' theorem, base-rate effects, normal distributions, likelihood, maximum likelihood or confidence intervals; these remain for the probability-completion block.
+
+### Reproduction status
+
+- Sample-space and event notation: Yes.
+- Union/intersection/complement probabilities: Yes.
+- Two-dice distribution: Yes.
+- Simulation with NumPy RNG: Likely yes.
+- Expected value calculation: Yes conceptually.
+- Variance by both formulas: Likely yes.
+- \(P(A\mid B)\) versus \(P(A\cap B)\): Yes.
+- Independence test: Yes.
+- Boolean-mask event intersection: Yes.
+- Full notebook from a blank file: Not explicitly tested.
+
+### Short no-AI retrieval check
+
+1. Distinguish an outcome, event and random variable.
+2. Explain \(P(A\cap B)\) versus \(P(A\mid B)\).
+3. State and use the independence condition.
+4. Explain expected value without using the phrase “expected value” in the definition.
+5. Explain why expected value and the most likely value are different concepts.
+6. Calculate the expectation and variance of a new small discrete distribution.
+7. Use Boolean masks to calculate an intersection probability from enumerated outcomes.
+
+### Session reflection
+
+**Most important thing learned:**  
+Conditional probability changes the set of outcomes being considered, while independence means that making this restriction does not change the probability of the other event.
+
+**Recurring error or misconception:**  
+The main issue was translating a correct numerical result into the correct verbal conclusion, especially when deciding whether an event pair was independent.
+
+**First task next:**  
+Return to the revised schedule and begin calculus/optimisation; probability returns later for Bayes, base rates, normal distributions, likelihood and the law of large numbers.
+
+---
+
+## Entry 014 — Derivatives, Product/Chain Rules and Gradients
+
+**Date:** 26 August 2026  
+**Plan stage:** Calculus and optimisation — Session 1  
+**Status:** Completed after review and corrections  
+**Overall confidence:** Green for the session concepts; arithmetic/transcription checking remains a review item
+
+### Tasks
+
+Create a calculus notebook that:
+
+1. retrieves probability and PCA concepts;
+2. differentiates polynomial functions;
+3. interprets derivative sign and stationary points;
+4. applies the product rule;
+5. applies the chain rule;
+6. combines product and chain rules;
+7. calculates partial derivatives;
+8. constructs and evaluates a two-variable gradient; and
+9. connects the gradient with the direction of steepest increase/decrease.
+
+### Independent work completed
+
+- Retrieved conditional probability, independence, expectation, variance and PCA terminology accurately.
+- Differentiated polynomial functions using the power rule.
+- Correctly applied the product rule and verified one result by expansion.
+- Correctly decomposed chain-rule problems into outer and inner functions.
+- Correctly combined product and chain rules in one expression.
+- Calculated both partial derivatives of \(f(x,y)=x^2+3xy+y^2\).
+- Constructed the full gradient and evaluated it at \((1,2)\).
+- Correctly identified the negative gradient as the direction of steepest decrease.
+- Completed an end-of-session conceptual check covering derivatives, partial derivatives and gradients.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Sign arithmetic | Corrected \(g'(2)\): the derivative was \(3x^2-8x\), but the substitution accidentally changed the sign | Algebraic sign was lost during substitution | Corrected |
+| Chain rule | Restored the missing exponent in \(8x(x^2+1)^3\) | A correct chain-rule derivation was followed by a transcription simplification error | Corrected |
+| Stationary points | Refined \(f'(x)=0\) to “stationary point / horizontal tangent”; it need not be a minimum | Zero derivative was being classified too narrowly | Understood |
+| Partial-derivative interpretation | Replaced “the x component of \(f\)” with “change in \(f\) with respect to \(x\) while \(y\) is held fixed” | Function value and input dimension were being conflated in wording | Corrected |
+| Derivative sign | Refined the statement so the sign of \(f'(x)\) describes whether \(f\) is locally increasing/decreasing, not whether \(x\) is | Input variable and function behaviour were conflated in wording | Corrected |
+| Gradient direction | Connected \(\nabla f(1,2)=[8,7]^T\) with the concrete steepest-descent direction \([-8,-7]^T\) | General rule needed a point-specific interpretation | Understood |
+
+### Strengths demonstrated
+
+- The product and chain rules were applied structurally rather than by pattern matching alone.
+- Partial derivatives were understood as holding the other variable fixed.
+- The gradient was interpreted geometrically rather than only assembled as a vector of formulas.
+- Probability retrieval from the previous session was successful.
+- Most errors were local arithmetic or transcription slips rather than failures of the calculus method.
+
+### Weak points and recurring issues
+
+1. Negative signs must be preserved carefully during substitution.
+2. Exponents can be lost during final algebraic simplification even when the derivative rule was applied correctly.
+3. Formal wording should distinguish the behaviour of the function from the behaviour of its input variable.
+4. A stationary point should not be automatically classified as a minimum.
+5. Final answers need a short arithmetic sanity check after the derivation is complete.
+
+### Diagnostic outcome
+
+**I can already:** differentiate simple polynomials and composite expressions, use product and chain rules, calculate partial derivatives, construct a gradient and explain its geometric direction.
+
+**I need to refresh:** stationary-point classification, precise derivative language and arithmetic checking after symbolic manipulation.
+
+**I cannot yet:** claim independent fluency with optimisation algorithms, learning-rate behaviour, numerical gradient checks, Jacobians or Hessians.
+
+### Reproduction status
+
+- Power rule: Yes.
+- Product rule: Yes.
+- Chain rule: Yes.
+- Combined product + chain rule: Likely yes.
+- Partial derivatives: Yes.
+- Two-variable gradient: Yes.
+- Gradient as steepest increase: Yes.
+- Negative gradient as steepest decrease: Yes.
+- Error-free arithmetic under time pressure: Review.
+
+### Short no-AI retrieval check
+
+1. Differentiate one polynomial and one nested composite function.
+2. Explain when the product rule is needed.
+3. Explain when the chain rule is needed.
+4. For a new \(f(x,y)\), calculate both partial derivatives and the gradient.
+5. Explain what \(\partial f/\partial x\) means at a specific point.
+6. Explain what \(f'(x)=0\) does and does not tell you.
+7. State which direction would decrease a function given its gradient.
+
+### Session reflection
+
+**Most important thing learned:**  
+A gradient packages the partial derivatives of a multivariable function into one vector whose direction gives the steepest local increase, making the negative gradient a natural direction for optimisation.
+
+**Recurring error or misconception:**  
+The underlying differentiation rules were mostly secure, but sign/exponent transcription and precise geometric wording needed correction.
+
+**First task next:**  
+Use derivatives and gradients to understand optimisation, loss surfaces and gradient descent, then derive the linear-regression MSE gradients for \(w\) and \(b\).
+
+---
+
+## Entry 015 — Optimisation, Loss Functions and Linear-Regression Gradients
+
+**Date:** 26 August 2026  
+**Plan stage:** Calculus and optimisation — Session 2  
+**Status:** Completed after extended review and corrections  
+**Overall confidence:** Green for the session's core optimisation and regression-gradient reasoning; implementation remains for Session 3
+
+### Tasks
+
+Create a connected optimisation notebook that:
+
+1. retrieves derivatives, partial derivatives and gradient direction;
+2. uses 3Blue1Brown to build geometric gradient-descent intuition;
+3. distinguishes parameters, objective/loss and optimisation;
+4. performs gradient descent by hand on \(L(w)=(w-3)^2\);
+5. reads the gradient-descent section of *Mathematics for Machine Learning*;
+6. distinguishes local and global minima and introduces convexity;
+7. reasons about gradient signs and loss landscapes;
+8. formulates one-feature linear regression as minimising MSE;
+9. derives \(\partial L/\partial w\) and \(\partial L/\partial b\);
+10. writes the vector and scalar gradient-descent updates; and
+11. performs one complete regression parameter update by hand.
+
+### Independent work completed
+
+- Retrieved chain rule, partial derivatives and gradient direction successfully.
+- Used the 3Blue1Brown gradient-descent explanation to connect a loss surface with repeated downhill parameter updates.
+- Correctly distinguished model parameters, loss/objective and optimisation after review.
+- Differentiated \(L(w)=(w-3)^2\) and identified \(w=3\) as both a local and global minimum.
+- Completed four hand-worked gradient-descent iterations and showed \(w\) moving toward 3 while loss and gradient magnitude decreased.
+- Read the relevant *Mathematics for Machine Learning* gradient-descent section and worked through its notation rather than treating the formula as opaque.
+- Correctly reasoned about positive, negative and zero gradients.
+- Formulated one-feature linear regression as \(\hat y_i=wx_i+b\) with MSE loss.
+- Correctly derived:
+  \[
+  \frac{\partial L}{\partial w}
+  =
+  \frac{1}{n}\sum_{i=1}^{n}2x_i(wx_i+b-y_i)
+  \]
+  and
+  \[
+  \frac{\partial L}{\partial b}
+  =
+  \frac{1}{n}\sum_{i=1}^{n}2(wx_i+b-y_i).
+  \]
+- Correctly constructed the two-component loss gradient.
+- Correctly wrote separate gradient-descent updates for \(w\) and \(b\).
+- For the supplied two-point dataset, correctly calculated \(dw=-13\), \(db=-8\), then updated to \(w=1.3\), \(b=0.8\).
+- Explained why the update direction was sensible given that the initial predictions were too low.
+- Completed a detailed end-of-session explanation linking parameters, predictions, residuals, loss, gradient and updated parameters.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Hand gradient descent | Identified an arithmetic error in the second update and used non-negative squared loss as a sanity check | Correct update rule was understood but arithmetic propagated incorrectly | Corrected |
+| Global minimum | Explained why \(L(w)=(w-3)^2\geq0\) makes \(w=3\) a global as well as local minimum | Local/global distinction was new | Understood |
+| Loss versus optimisation | Corrected a definition that described optimisation under the “loss/objective” heading | The objective function and the process used to minimise it were conflated | Corrected |
+| Recalculation of gradient | Explained that each parameter update moves to a new point where the gradient may have a different direction and magnitude | Iteration was initially described only as “getting closer” | Corrected |
+| MML notation | Explained that \((\nabla f)(x_i)\) means evaluating the gradient function at \(x_i\), not multiplying \(\nabla f\) by \(x_i\) | Compact function-application notation looked like multiplication | Understood |
+| Gradient orientation | Explained that the transpose in the MML equation reflects the book's row/column convention | Textbook notation differed from the column-gradient convention used in the lessons | Understood |
+| Regression gradient update | Corrected an attempted matrix product between the gradient and parameter vector | The MML update equation had been translated too literally | Corrected |
+| Partial-derivative interpretation | Clarified that \(b\) is held fixed at its current value, not necessarily at zero, when interpreting \(\partial L/\partial w\) | “Held fixed” was mistaken for “set to zero” | Corrected |
+| \(w\)- versus \(b\)-gradient | Explained that the \(w\)-gradient weights residuals by \(x_i\), while the \(b\)-gradient does not | The difference was initially described only as “less dependent on inputs” | Corrected |
+| Convexity | Corrected the claim that every convex function has only one stationary point; for differentiable convex functions, any zero-gradient point is global, while uniqueness needs stronger assumptions such as strict convexity | Convexity and unique minimisers were conflated | Concept understood in Exercise 3; one stale end-check sentence should still be edited |
+| Session scope | Acknowledged that the assigned “~2 hour” session was substantially over-scoped and took most of a day | Too much external reading, derivation and practice were bundled together | Future sessions should be narrower without cutting core curriculum |
+
+### Strengths demonstrated
+
+- The linear-regression gradient derivation was completed correctly from first principles using the chain rule.
+- The gradient-descent update was understood numerically, geometrically and symbolically.
+- Textbook notation was questioned and unpacked carefully rather than copied mechanically.
+- A mistaken vector update was corrected by returning to the meaning and dimensions of the gradient.
+- Hand calculations were used to verify that a parameter update actually moved the model in a sensible direction.
+- The final explanation connected the entire optimisation loop rather than treating each formula independently.
+- The corrected Exercise 3 explanation demonstrates the key convexity idea even though one older sentence in the end check still needs tidying.
+
+### Weak points and recurring issues
+
+1. Arithmetic/transcription errors can propagate through an iterative calculation; sanity checks should be used early.
+2. Dense mathematical notation can be misread when function application, multiplication and transpose appear together.
+3. Convexity does not imply a unique stationary point unless stronger conditions apply.
+4. Loss/objective, optimisation method, parameter vector and gradient are separate objects and should be named distinctly.
+5. Symbolic derivations are strong, but precise written definitions often need a second pass.
+6. Very long sessions reduce efficiency; future lessons should preserve depth while narrowing the amount assigned at once.
+
+### Diagnostic outcome
+
+**I can already:** explain gradient descent geometrically; perform simple updates by hand; distinguish parameters, loss and optimisation; derive one-feature linear-regression MSE gradients; interpret both gradient components; and write the corresponding parameter-update equations.
+
+**I need to refresh:** convexity versus strict convexity, exact textbook gradient notation, and arithmetic checking in iterative calculations.
+
+**I cannot yet:** claim the calculus/optimisation block complete until batch gradient descent is implemented in NumPy, learning-rate behaviour is compared, and analytical gradients are checked with finite differences.
+
+### Reproduction status
+
+- Gradient-descent intuition: Yes.
+- Scalar gradient-descent update by hand: Yes.
+- Local versus global minimum: Yes.
+- Convexity intuition: Likely; retrieve once because the end-of-session wording still contains an outdated statement.
+- MML gradient-descent notation: Yes after clarification.
+- Linear-regression MSE formulation: Yes.
+- \(\partial L/\partial w\) derivation: Yes.
+- \(\partial L/\partial b\) derivation: Yes.
+- Vector/scalar parameter-update equations: Yes.
+- One regression update by hand: Yes.
+- Batch NumPy implementation: Not yet; Session 3.
+- Learning-rate comparison: Not yet.
+- Finite-difference gradient check: Not yet.
+
+### Short no-AI retrieval check
+
+1. Write the scalar and vector gradient-descent update equations from memory.
+2. Explain why the gradient is recalculated after every update.
+3. Explain the difference between a local and global minimum.
+4. State what convexity guarantees about a stationary point and what it does not guarantee about uniqueness.
+5. Starting from one-feature MSE, derive \(dL/dw\) and \(dL/db\) without notes.
+6. Explain why \(x_i\) appears in the \(w\)-gradient but not as a multiplier in the \(b\)-gradient.
+7. Given a tiny dataset and starting \(w,b\), perform one parameter update by hand.
+8. Explain \((\nabla f)(x_i)\) in the MML notation without interpreting it as multiplication.
+
+### Session reflection
+
+**Most important thing learned:**  
+Gradient descent turns local derivative information into an iterative optimisation rule: calculate how the loss changes with each parameter, move each parameter in the opposite direction, then recalculate at the new point.
+
+**Recurring error or misconception:**  
+The main difficulties were notation and precision rather than the derivative algebra itself: function application in the MML equation looked like multiplication, and convexity was initially conflated with having one unique stationary point.
+
+**First task next:**  
+Implement the derived prediction, MSE and gradient equations as batch gradient descent in NumPy, then inspect the fitted line and loss history before moving to learning-rate comparison and finite-difference checking.
+
