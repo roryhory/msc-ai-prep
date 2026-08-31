@@ -1644,3 +1644,231 @@ The main difficulties were notation and precision rather than the derivative alg
 **First task next:**  
 Implement the derived prediction, MSE and gradient equations as batch gradient descent in NumPy, then inspect the fitted line and loss history before moving to learning-rate comparison and finite-difference checking.
 
+---
+
+## Entry 016 — Batch Gradient Descent in NumPy
+
+**Date:** Completed by 31 August 2026  
+**Plan stage:** Calculus and optimisation — Session 3  
+**Status:** Completed after review and corrections  
+**Overall confidence:** Green
+
+### Tasks
+
+Build a NumPy implementation of batch gradient descent for one-feature linear regression that:
+
+1. retrieves the MSE and regression-gradient equations;
+2. implements vectorised prediction and MSE functions;
+3. implements the analytical gradients for $w$ and $b$;
+4. verifies those gradients against the previous hand calculation;
+5. combines prediction, loss, gradients and parameter updates into a training loop;
+6. records loss across iterations;
+7. plots the loss history and fitted line; and
+8. explains the complete optimisation loop without relying on Python syntax.
+
+### Independent work completed
+
+- Recalled the linear-regression model and gradient-descent update equations.
+- Implemented a vectorised `predict()` function for $\hat y=wx+b$.
+- Implemented MSE as a scalar reduction over the residual vector.
+- Implemented vectorised analytical gradients for both $w$ and $b$.
+- Reproduced the hand-worked check $dw=-13$ and $db=-8$ on the two-point dataset.
+- Implemented a complete batch-gradient-descent function starting from $w=0$, $b=0$.
+- Stored one loss value per iteration and returned the learned parameters and loss history.
+- Trained on noisy synthetic data generated around $y=3x+5$.
+- Learned approximately $w=2.92$ and $b=5.29$ with final MSE around $2.33$.
+- Plotted the loss against iteration and the fitted line against the observations.
+- Correctly explained the role of NumPy vectorisation and why the remaining loop is over optimisation iterations rather than observations.
+- Correctly explained the full chain from data to predictions, residuals, loss, gradients, parameter updates and repetition.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Initial parameter location | Clarified that $w=0$ and $b=0$ should be initialised inside `gradient_descent()` for this exercise | Function contract versus caller-supplied arguments | Understood |
+| MSE notation | Identified a written MSE formula that omitted the square even though the Python implementation was correct | Transcription error in Markdown, not implementation | Corrected |
+| Gradient unit-style check | Identified that `dw` had accidentally been checked twice instead of checking `dw` and `db` | Copy/paste error in verification code | Corrected |
+| Docstrings | Refined `w` from “slope gradient parameter” to weight/slope parameter and `dw`/`db` to gradients | Parameter and gradient terminology needed separation | Corrected |
+| Final-loss bookkeeping | Explained that a loss recorded before the final update does not correspond exactly to the returned post-update parameters | Order of operations inside an iterative algorithm | Corrected by explicitly calculating final loss after training |
+| Loss-curve interpretation | Corrected the claim that a rapid early decrease meant the curve was not smooth | Rate of decrease and smoothness were being conflated | Corrected |
+| Regression-fit wording | Replaced “minimises the distance” with minimising mean squared vertical residuals | Geometric description needed statistical precision | Corrected |
+
+### Strengths demonstrated
+
+- The implementation was derived directly from the mathematics rather than copied from a library implementation.
+- Prediction, residual and gradient calculations were vectorised across all observations.
+- The analytical gradient implementation reproduced the earlier hand calculation exactly.
+- The optimisation loop was assembled successfully from independently tested pieces.
+- Learned parameters were checked against the known data-generating relationship rather than accepted without interpretation.
+- The final verbal explanation showed the full optimisation pipeline was understood independently of Python syntax.
+- Most corrections were bookkeeping, terminology or transcription rather than failures of the optimisation logic.
+
+### Weak points and recurring issues
+
+1. Written formulas need the same final checking as executable code; the implementation can be right while the Markdown equation is wrong.
+2. Copy/paste verification checks can silently test the same quantity twice.
+3. Parameter names and gradient names should remain distinct: $w$ is a parameter, while $dw$ represents $\partial L/\partial w$.
+4. In iterative algorithms, the exact point at which a metric is recorded matters.
+5. Plot interpretation should distinguish smoothness, rate of change and convergence.
+
+### Diagnostic outcome
+
+**I can already:** translate the regression-gradient equations into vectorised NumPy; implement prediction, MSE and analytical gradients; write a batch-gradient-descent training loop; inspect its loss history; and explain the full optimisation cycle.
+
+**I need to refresh:** precise bookkeeping around when loss is recorded and careful formula/code verification after implementation.
+
+**I cannot yet:** consider the optimisation block complete until learning-rate behaviour, numerical gradient checking and feature-scaling effects have been tested.
+
+### Reproduction status
+
+- Vectorised prediction: Yes.
+- MSE implementation: Yes.
+- Analytical $dw$ and $db$: Yes.
+- Tiny-dataset gradient verification: Yes.
+- Batch-gradient-descent loop: Yes.
+- Loss-history recording: Yes.
+- Fitted-line visualisation: Likely; Matplotlib syntax may still require reference material.
+- Full conceptual explanation of the algorithm: Yes.
+
+### Short no-AI retrieval check
+
+1. Write the MSE and both regression-gradient equations from memory.
+2. Explain why `predict()` returns an array while `mse()` returns one scalar.
+3. Explain why there is no Python loop over individual observations.
+4. Write the parameter-update equations for $w$ and $b$.
+5. Explain why the gradient must be recalculated after each update.
+6. Explain why the algorithm is called batch gradient descent.
+7. Reconstruct the pipeline: data → predictions → residuals → loss → gradients → parameter update → repeat.
+
+### Session reflection
+
+**Most important thing learned:**  
+The gradient-descent equations derived by hand translate almost directly into vectorised NumPy operations; the only necessary iterative loop is over successive parameter updates.
+
+**Recurring error or misconception:**  
+The optimisation logic was secure, but small mismatches between written formulas, verification checks and loop bookkeeping showed the need to test the explanation as carefully as the code.
+
+**First task next:**  
+Stress-test the optimiser with different learning rates, verify the analytical gradients using finite differences, examine feature scaling and compare the fitted coefficients with scikit-learn.
+
+---
+
+## Entry 017 — Learning Rate, Gradient Checking and Optimisation Consolidation
+
+**Date:** 31 August 2026  
+**Plan stage:** Calculus and optimisation — Session 4  
+**Status:** Completed after review and corrections; calculus/optimisation block complete  
+**Overall confidence:** Green
+
+### Tasks
+
+Consolidate the calculus/optimisation block by:
+
+1. retrieving the gradient-descent update equations and learning-rate interpretation;
+2. comparing slow, useful and unstable learning rates;
+3. interpreting overshoot and divergence geometrically;
+4. revisiting the distinction between the gradient and learning rate;
+5. implementing central finite-difference numerical gradients;
+6. checking analytical $dw$ and $db$ against independent numerical estimates;
+7. testing the effect of feature scaling on optimisation stability;
+8. comparing the fitted parameters with `sklearn.linear_model.LinearRegression`; and
+9. completing a final calculus/optimisation retrieval check.
+
+### Independent work completed
+
+- Recalled the parameter-update equations for $w$ and $b$.
+- Correctly explained that the learning rate controls the size of the update applied to the gradient.
+- Compared $\eta=0.001$, $\eta=0.01$ and $\eta=0.03$ over the same dataset.
+- Identified $\eta=0.001$ as stable but slow, $\eta=0.01$ as useful convergence and $\eta=0.03$ as divergent.
+- Produced a logarithmic loss-history comparison showing the different behaviours clearly.
+- Correctly connected a large learning rate with overshooting the minimum and possible oscillation/divergence.
+- Implemented central finite-difference estimates for both $w$ and $b$.
+- Obtained extremely close agreement between analytical and numerical gradients.
+- Explained why independent numerical agreement provides evidence that the analytical gradient implementation is correct.
+- Correctly identified gradient checking as a verification technique rather than a practical replacement for analytical gradients during training.
+- Predicted that scaling $x$ would change the stability of the same learning rate before running the experiment.
+- Correctly linked feature magnitude to the $x_i$ factor in $\partial L/\partial w$.
+- Suggested standardisation as a practical response when multiple model features have very different scales.
+- Fit the same regression with scikit-learn and obtained parameters very close to the gradient-descent result.
+- Correctly explained that the two methods optimise the same least-squares objective by different numerical approaches.
+- Completed the final retrieval check after correcting the definitions of derivative, partial derivative and gradient.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Retrieval prompt | Corrected an exercise that accidentally displayed the equations it was asking the learner to recall | Exercise-design error by AI, not learner misunderstanding | Prompt repaired |
+| Large learning rate | Refined “the gradient sign will flip every iteration” to possible overshoot, oscillation and divergence | One observed behaviour was being stated as universal | Corrected |
+| Small learning rate | Added the convex-problem/sufficiently-small caveat to the claim that a tiny learning rate will eventually reach the same optimum | Convergence was being described too absolutely | Corrected |
+| Numerical-gradient argument order | Identified that `mse(predict(...), y)` reversed the documented `mse(y_true, y_pred)` contract | Squared-error symmetry hid an interface inconsistency | Corrected |
+| Gradient-check interpretation | Separated “why agreement supports correctness” from “why this is useful in complicated models” | Two related questions had initially been merged | Corrected and retrieved |
+| Feature-scaling wording | Refined “counteracts the learning rate” to “changes gradient magnitude, therefore changes the effective parameter-update size” | Cause/effect needed more precise wording | Corrected |
+| scikit-learn comparison | Added that both methods minimise the same least-squares objective | The original answer described scikit-learn but not why the results should agree | Corrected |
+| Derivative/partial/gradient definitions | Corrected definitions that used “gradient” too broadly | Three related mathematical objects had been blurred together in wording | Corrected and retrieved accurately |
+| Convexity | Restated that for a differentiable convex function any stationary point is global, while uniqueness requires strict convexity | Precision after the previous session's misconception | Retrieved correctly |
+| Batch-gradient-descent explanation | Added that every gradient calculation uses all observations and that updated parameters generate new predictions before loss is recalculated | Algorithm description needed the defining “batch” property | Corrected |
+| Terminology/docstrings | Cleaned remaining “slope gradient parameter” wording | Parameter and derivative terminology | Corrected |
+
+### Strengths demonstrated
+
+- Learning-rate behaviour was tested experimentally rather than treated as a memorised rule.
+- The divergent run was interpreted using the geometry of repeatedly overshooting the minimum.
+- Finite differences were implemented independently of the analytical gradient function.
+- Analytical and numerical derivatives agreed to floating-point precision.
+- Feature scaling was predicted to affect optimisation before the code was run, showing transfer from the gradient formula to a new situation.
+- The link between feature scale, gradient magnitude and learning-rate sensitivity was understood.
+- The scikit-learn comparison was used as an independent sanity check rather than as a replacement implementation.
+- Final retrieval distinguished derivative, partial derivative and gradient precisely.
+- Convexity, local/global minima, learning rate and batch gradient descent were all explained correctly after correction.
+
+### Weak points and recurring issues
+
+1. Avoid turning a behaviour observed in one run into a universal rule; use “can” rather than “will” when convergence depends on the function and learning rate.
+2. Function argument contracts should remain consistent even when a symmetric mathematical expression hides the mistake.
+3. Closely related mathematical terms can become blurred in verbal explanations even when the calculations are correct.
+4. Gradient checking should be remembered as an independent diagnostic, not as the normal training method.
+5. Feature scaling changes the geometry/conditioning of optimisation rather than simply “making the learning rate smaller.”
+
+### Diagnostic outcome
+
+**I can already:** distinguish derivatives, partial derivatives and gradients; explain and implement batch gradient descent; reason about local/global minima and convexity; diagnose learning-rate behaviour; verify analytical derivatives numerically; explain why feature scaling affects optimisation; and compare an iterative regression fit with a library least-squares solution.
+
+**I need to refresh:** convex versus strictly convex functions, finite-difference gradient checking and feature-scaling/conditioning terminology during later machine-learning work.
+
+**I cannot yet:** claim experience with stochastic/minibatch gradient descent, Jacobians or Hessians; these are stretch topics rather than requirements for the current preparation minimum.
+
+### Reproduction status
+
+- Derivative / partial derivative / gradient distinction: Yes.
+- Negative-gradient direction: Yes.
+- Linear-regression MSE gradients: Yes.
+- Batch gradient descent: Yes.
+- Learning-rate diagnosis: Yes.
+- Central finite-difference gradient check: Likely yes; retrieve once later.
+- Feature-scaling effect on gradient descent: Yes conceptually.
+- scikit-learn least-squares comparison: Likely; exact API syntax may need reference material.
+- Convexity versus strict convexity: Yes after correction; retrieve later.
+
+### Short no-AI retrieval check
+
+1. Define derivative, partial derivative and gradient without using the terms interchangeably.
+2. Explain what the gradient controls versus what the learning rate controls.
+3. Explain how an excessively large learning rate can cause divergence.
+4. State what convexity guarantees about a stationary point and what strict convexity adds.
+5. Derive $dL/dw$ and $dL/db$ for one-feature linear-regression MSE.
+6. Explain the difference between analytical and numerical gradients.
+7. Write the central finite-difference approximation for one parameter.
+8. Explain why feature scaling can change whether a fixed learning rate is stable.
+9. Explain why gradient descent and scikit-learn can produce nearly the same regression parameters using different methods.
+
+### Session reflection
+
+**Most important thing learned:**  
+The gradient gives local directional information, while the learning rate determines how aggressively that information is used; optimisation stability therefore depends on both the loss landscape and the numerical scale of the problem.
+
+**Recurring error or misconception:**  
+The main remaining errors were over-generalised wording and distinctions between closely related concepts rather than failures in the mathematical derivation or implementation.
+
+**First task next:**  
+Return to probability/statistics and complete the remaining core topics, including Bayes/base-rate reasoning, distributions, covariance/correlation, sampling behaviour and likelihood.
+

@@ -585,15 +585,43 @@ group_summary = (
 | Positive semidefinite matrix | A symmetric matrix satisfying \(x^TAx\ge0\) for every vector \(x\). | Covariance matrices are positive semidefinite, so their eigenvalues are non-negative apart from tiny numerical error. | New |
 
 
-## Calculus
+## Calculus and optimisation
 
 | Term | Definition | Formula / note | Status |
 |---|---|---|---|
-| Derivative | Measures the instantaneous rate of change of a function. | \(\frac{df}{dx}\) | Secure |
-| Power rule | Differentiate \(x^n\) by multiplying by \(n\) and reducing the exponent by 1. | \(\frac{d}{dx}x^n=nx^{n-1}\) | Secure |
-| Chain rule | Differentiates a composite function by multiplying the outer derivative by the inner derivative. | \(\frac{d}{dx}e^{2x}=2e^{2x}\) | Secure |
-| Partial derivative | Differentiates a multivariable function with respect to one variable while treating all others as constants. | \(\frac{\partial h}{\partial x}\) | Review |
-| Constant with respect to a variable | A term containing no instance of the differentiation variable has derivative zero. | For \(\partial/\partial x\), \(5y^2\) is constant. | Review |
+| Derivative | Instantaneous rate of change of a one-variable function with respect to its input; geometrically, the slope of the tangent to the curve at that point. | $\frac{df}{dx}$ | Secure |
+| Power rule | Differentiate $x^n$ by multiplying by $n$ and reducing the exponent by 1. | $\frac{d}{dx}x^n=nx^{n-1}$ | Secure |
+| Product rule | Differentiates the product of two functions. | $\frac{d}{dx}[u(x)v(x)]=u'v+uv'$ | Secure |
+| Chain rule | Differentiates a composite function by multiplying the outer derivative by the derivative of the inner function. | $\frac{d}{dx}f(g(x))=f'(g(x))g'(x)$ | Secure |
+| Stationary point | A point where the derivative or gradient is zero. It may be a local minimum, local maximum or another stationary point. | In one dimension, $f'(x)=0$. | Review |
+| Partial derivative | Derivative of a multivariable function with respect to one variable while all other variables are held fixed. | $\frac{\partial f}{\partial x}$ | Secure |
+| Constant with respect to a variable | A term containing no instance of the differentiation variable has derivative zero. | For $\partial/\partial x$, $5y^2$ is constant. | Secure |
+| Gradient | Vector containing all partial derivatives of a scalar-valued multivariable function. It points in the direction of steepest local increase. | $\nabla f=[\partial f/\partial x_1,\ldots,\partial f/\partial x_n]^T$ | Secure |
+| Negative gradient | Direction of steepest local decrease of a differentiable scalar-valued function. | Gradient descent moves in direction $-\nabla L$. | Secure |
+| Objective function | Scalar function whose value an optimisation procedure seeks to minimise or maximise. | In the regression exercises, the objective was MSE loss. | Secure |
+| Loss function | Objective function measuring model error for a given set of parameters. Lower values are normally preferred when minimising. | $L(w,b)=\frac{1}{n}\sum_i(\hat y_i-y_i)^2$ | Secure |
+| Optimisation | Process of finding parameter values that minimise or maximise an objective function. | Gradient descent is one optimisation algorithm. | Secure |
+| Model parameter | Value learned or adjusted during model fitting. | In $\hat y=wx+b$, $w$ and $b$ are parameters. | Secure |
+| Gradient descent | Iterative optimisation method that updates parameters in the negative-gradient direction. | $\theta_{i+1}=\theta_i-\eta\nabla L(\theta_i)$ | Secure |
+| Learning rate | Positive scalar that controls the size of each gradient-descent parameter update. | Usually written $\eta$. Too small can be slow; too large can overshoot or diverge. | Secure |
+| Batch gradient descent | Gradient descent where each gradient calculation uses all observations in the dataset. | One update is based on the full-data gradient. | Secure |
+| Local minimum | A point whose objective value is no greater than values in a nearby neighbourhood. | It need not be the lowest value over the whole domain. | Secure |
+| Global minimum | A point whose objective value is no greater than the value at every other point in the domain. | A convex differentiable objective has no non-global local minima. | Secure |
+| Convex function | Function whose line segment between any two points on its graph lies on or above the graph. For a differentiable convex function, every stationary point is a global minimum. | Convexity does not by itself guarantee a unique minimiser. | Review |
+| Strictly convex function | Stronger form of convexity that prevents flat line segments between distinct points and gives at most one minimiser when one exists. | Useful distinction when discussing uniqueness. | Review |
+| Linear-regression prediction | One-feature linear model mapping an input to a prediction. | $\hat y_i=wx_i+b$ | Secure |
+| Mean squared error (MSE) | Mean of squared residuals between predictions and observed targets. | $L(w,b)=\frac{1}{n}\sum_{i=1}^{n}(\hat y_i-y_i)^2$ | Secure |
+| Residual in regression | Difference between a prediction and observed target. The sign convention used in the gradient derivation was prediction minus target. | $r_i=\hat y_i-y_i$ | Secure |
+| MSE gradient with respect to $w$ | Partial derivative describing how MSE changes locally when the slope/weight parameter changes while $b$ is held fixed. | $\frac{\partial L}{\partial w}=\frac{2}{n}\sum_i x_i(\hat y_i-y_i)$ | Secure |
+| MSE gradient with respect to $b$ | Partial derivative describing how MSE changes locally when the intercept changes while $w$ is held fixed. | $\frac{\partial L}{\partial b}=\frac{2}{n}\sum_i(\hat y_i-y_i)$ | Secure |
+| Analytical gradient | Gradient obtained by differentiating the objective function symbolically and then evaluating the resulting formula. | Used by the hand derivation and NumPy `gradients()` function. | Secure |
+| Numerical gradient | Approximation to a derivative obtained from nearby function values rather than a symbolic derivative formula. | Useful mainly as a verification tool. | Review |
+| Central finite difference | Numerical derivative approximation using function values on both sides of the evaluation point. | $f'(x)\approx\frac{f(x+\varepsilon)-f(x-\varepsilon)}{2\varepsilon}$ | Review |
+| Gradient check | Comparison of an analytical gradient with an independently calculated numerical gradient to detect derivation or implementation errors. | Approximate agreement gives evidence that the analytical gradient is implemented correctly. | Review |
+| Overshoot | A gradient-descent step crosses past a nearby minimum because the update is too large. | Repeated overshoot can produce oscillation or divergence. | Review |
+| Divergence | Optimisation behaviour in which parameter values and/or loss move away from a stable minimum rather than converging. | Can occur when the learning rate is too large. | Secure |
+| Feature scaling | Transforming feature magnitudes to more comparable numerical scales. It can change gradient magnitudes and optimisation stability. | If $x$ is rescaled, the $x_i$ factor in $\partial L/\partial w$ changes. | Review |
+| Standardisation | Common feature-scaling transformation that centres a feature and divides by its standard deviation. | $z=(x-\mu)/\sigma$ | New |
 
 ## Probability and statistics
 
@@ -625,7 +653,7 @@ group_summary = (
 | Training data | Data used to fit model parameters and learn patterns. | Must not contain information from validation or test samples. | Review |
 | Validation data | Data used during model selection and hyperparameter tuning. | Repeated tuning means it is not the final unbiased estimate. | Review |
 | Test data | Untouched data used once after model selection to estimate final generalisation performance. | Also called a holdout set. | Review |
-| Parameter | A value learned from training data. | Examples: regression weights, neural-network weights. | New |
+| Parameter | A value learned or adjusted during model fitting. | Examples: regression weights and neural-network weights. | Secure |
 | Hyperparameter | A setting chosen outside the low-level fitting process. | Examples: tree depth, regularisation strength, number of layers. | Review |
 | Principal component analysis (PCA) | Linear dimensionality-reduction method that changes coordinates to orthogonal directions of decreasing variance. | Centre data, eigendecompose covariance, sort eigenpairs, project onto selected eigenvectors. | Review |
 | Principal component direction | A covariance-matrix eigenvector used as a new axis through feature space. | PC1 is the eigenvector with the largest eigenvalue. | Review |
@@ -646,7 +674,7 @@ group_summary = (
 | Overfitting | Learning patterns or noise specific to training data that do not generalise. | Often high training performance and weaker validation performance. | Secure |
 | Underfitting | A model is too simple or insufficiently trained to capture relevant patterns. | Poor performance on both training and validation data. | New |
 | Regularisation | Methods that discourage excessive model complexity to improve generalisation. | Often adds a penalty to the loss function. | Review |
-| Loss function | A numerical measure of prediction error optimised during training. | Lower is usually better. | New |
+| Loss function | A numerical objective measuring prediction error for a set of model parameters. | Lower is usually better when the objective is minimised. | Secure |
 | Data leakage | Information unavailable at genuine prediction time, or information from validation/test samples, influences fitting or preprocessing. | Produces overly optimistic performance estimates. | Review |
 | Classification | Predicts a discrete class or category. | Benign/malignant, yes/no | Secure |
 | Regression | Predicts a continuous numerical value. | Price, temperature, quantity | Secure |
@@ -692,31 +720,33 @@ These are the current highest-priority glossary items to retrieve without notes:
 18. Precision versus recall.
 19. Validation set versus final test set.
 20. Cross-validation inside a train/test workflow.
-21. Partial derivatives.
-22. One-dimensional NumPy vectors `(n,)` versus explicit row `(1, n)` and column `(n, 1)` shapes.
-23. Assignment versus NumPy views versus independent copies.
-24. The right-to-left NumPy broadcasting rule.
-25. Preserving intended element order through transpose, flatten and reshape.
-26. Series versus one-column DataFrame selection.
-27. `.loc` versus `.iloc`.
-28. Cleaning-order consequences and missing-data trade-offs.
-29. Named aggregation syntax.
-30. pandas index versus normal data columns.
-31. MultiIndex columns produced by multiple grouped aggregations.
-32. `plt.subplots()` and the Figure/Axes distinction.
-33. Matplotlib syntax for scatter points, direction lines, arrows and connecting segments.
-34. Observation-level versus aggregated data for grouped plots.
-35. Sampling variability versus “eliminating randomness.”
-36. Association versus causation.
-37. Confounding and its effect on interpretation.
-38. `np.linalg.LinAlgError` handling for singular operations.
-39. Classifying unique, infinite and absent solutions on a fresh singular system.
-40. Scalar projection versus vector projection.
-41. The unit-vector condition in \(P=uu^T\).
-42. Deriving \(r\cdot v=0\) from the projection formula.
-43. Why projection matrices are symmetric and idempotent.
-44. Consistent row-vector versus column-vector notation.
-45. Generalising a line projection to projection onto a higher-dimensional subspace.
+21. Convexity versus strict convexity and what each guarantees about minima.
+22. Central finite-difference gradient checking and why it is used for verification rather than training.
+23. Feature scaling, gradient magnitude and learning-rate stability.
+24. One-dimensional NumPy vectors `(n,)` versus explicit row `(1, n)` and column `(n, 1)` shapes.
+25. Assignment versus NumPy views versus independent copies.
+26. The right-to-left NumPy broadcasting rule.
+27. Preserving intended element order through transpose, flatten and reshape.
+28. Series versus one-column DataFrame selection.
+29. `.loc` versus `.iloc`.
+30. Cleaning-order consequences and missing-data trade-offs.
+31. Named aggregation syntax.
+32. pandas index versus normal data columns.
+33. MultiIndex columns produced by multiple grouped aggregations.
+34. `plt.subplots()` and the Figure/Axes distinction.
+35. Matplotlib syntax for scatter points, direction lines, arrows and connecting segments.
+36. Observation-level versus aggregated data for grouped plots.
+37. Sampling variability versus “eliminating randomness.”
+38. Association versus causation.
+39. Confounding and its effect on interpretation.
+40. `np.linalg.LinAlgError` handling for singular operations.
+41. Classifying unique, infinite and absent solutions on a fresh singular system.
+42. Scalar projection versus vector projection.
+43. The unit-vector condition in \(P=uu^T\).
+44. Deriving \(r\cdot v=0\) from the projection formula.
+45. Why projection matrices are symmetric and idempotent.
+46. Consistent row-vector versus column-vector notation.
+47. Generalising a line projection to projection onto a higher-dimensional subspace.
 
 ---
 
