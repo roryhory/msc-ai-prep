@@ -1872,3 +1872,569 @@ The main remaining errors were over-generalised wording and distinctions between
 **First task next:**  
 Return to probability/statistics and complete the remaining core topics, including Bayes/base-rate reasoning, distributions, covariance/correlation, sampling behaviour and likelihood.
 
+---
+
+## Entry 018 — Bayes' Theorem and Base Rates
+
+**Date:** 2 September 2026  
+**Plan stage:** Probability and statistics completion  
+**Status:** Completed after retrieval and simulation; core Bayes/base-rate reasoning secure  
+**Overall confidence:** Green
+
+### Tasks
+
+Extend the existing probability foundations into Bayesian reasoning by:
+
+1. retrieving conditional probability and independence;
+2. deriving and interpreting Bayes' theorem;
+3. distinguishing prior, likelihood and posterior;
+4. solving a low-prevalence diagnostic-testing example by formula and natural frequencies;
+5. examining how prevalence changes the posterior probability;
+6. verifying the result with a NumPy simulation; and
+7. completing a short end-of-session retrieval check.
+
+### Independent work completed
+
+- Recalled the conditional-probability formula and independence rule after a brief correction.
+- Used Bayes' theorem correctly in direct-substitution problems.
+- Distinguished the prior $P(H)$, likelihood $P(E\mid H)$ and posterior $P(H\mid E)$.
+- Solved the low-prevalence diagnostic example with:
+  - prevalence $P(H)=0.01$;
+  - sensitivity $P(E\mid H)=0.95$;
+  - false-positive rate $P(E\mid \neg H)=0.05$.
+- Correctly obtained $P(E)=0.059$ and posterior $P(H\mid E)\approx0.161$.
+- Reproduced the same result with natural frequencies in a 10,000-person population.
+- Correctly explained why a large healthy population can generate many false positives even when the false-positive rate is low.
+- Correctly reasoned that increasing prevalence increases the posterior probability for the same test characteristics.
+- Implemented a 100,000-person NumPy simulation and obtained simulated prevalence, sensitivity, false-positive rate and posterior close to the theoretical values.
+- Correctly explained that finite simulation results need not equal the theoretical probabilities exactly.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Conditional-probability retrieval | Corrected an initial mix-up between conditional probability and union | Event notation needed retrieval | Corrected |
+| Prior interpretation | Clarified that a prior is the starting probability before evidence, not a ceiling on the posterior | Prior/posterior relationship | Corrected |
+| Diagnostic terminology | Distinguished sensitivity / true-positive rate from posterior positive predictive value | Similar diagnostic quantities were being conflated | Corrected |
+| Simulation metric | Corrected an initial false-positive-rate / false-negative-rate naming mix-up | Metric terminology | Corrected |
+| Conditional direction | Reinforced that $P(H\mid E)$ and $P(E\mid H)$ are different conditionals even though they could coincide numerically by chance | Conditioning direction | Secure |
+
+### Strengths demonstrated
+
+- Bayes' theorem was connected to the conditional-probability formula rather than memorised in isolation.
+- Natural-frequency reasoning and formula-based reasoning produced the same answer.
+- The base-rate effect was interpreted correctly in practical diagnostic terms.
+- NumPy simulation was used as an empirical check rather than a replacement for the probability calculation.
+- The distinction between sensitivity and posterior probability was secure after correction.
+
+### Weak points and recurring issues
+
+1. Conditional-probability notation can still be momentarily confused with set operations under retrieval pressure.
+2. Diagnostic metrics with similar names need explicit labels: sensitivity, false-positive rate and positive predictive value are different quantities.
+3. When describing Bayes, keep the conditioning direction explicit.
+
+### Diagnostic outcome
+
+**I can already:** calculate and interpret Bayes' theorem, explain prior/likelihood/posterior, reason about diagnostic base rates using formulas or counts, and verify theoretical probabilities with simulation.
+
+**I need to refresh:** exact diagnostic terminology and the direction of conditional probabilities.
+
+**I cannot yet:** claim the wider probability/statistics block is complete until the remaining distribution/likelihood material has been connected to ML.
+
+### Reproduction status
+
+- Conditional probability: Yes.
+- Bayes' theorem: Yes.
+- Prior / likelihood / posterior distinction: Yes.
+- Low-prevalence base-rate example: Yes.
+- Natural-frequency interpretation: Yes.
+- NumPy diagnostic simulation: Likely; exact NumPy syntax may need reference.
+- Sensitivity versus posterior probability: Yes after correction.
+
+### Session reflection
+
+**Most important thing learned:**  
+A high-quality test can still have a surprisingly low posterior probability after a positive result when the underlying condition is rare; Bayes combines the test characteristics with the base rate.
+
+**Recurring error or misconception:**  
+The main issue was terminology and conditioning direction rather than the underlying probability arithmetic.
+
+**First task next:**  
+Cover the remaining distribution, standardisation and sampling concepts efficiently, then move probability/statistics directly into an ML application.
+
+---
+
+## Entry 019 — Normal Distributions, z-Scores and the Law of Large Numbers
+
+**Date:** 2 September 2026  
+**Plan stage:** Probability and statistics completion  
+**Status:** Completed; remaining statistics to be integrated into ML rather than extended as a standalone block  
+**Overall confidence:** Green
+
+### Tasks
+
+Consolidate the remaining distribution and sampling concepts by:
+
+1. retrieving expectation, variance, standard deviation and Bayes simulation intuition;
+2. interpreting the normal distribution through $\mu$ and $\sigma$;
+3. using $z$-scores to compare observations on different scales;
+4. simulating repeated die rolls;
+5. calculating a running sample mean; and
+6. interpreting convergence toward the expected value under the law of large numbers.
+
+### Independent work completed
+
+- Defined expectation as a probability-weighted long-run average after a precision correction.
+- Defined variance as expected squared deviation from the mean.
+- Distinguished discrete and continuous random variables.
+- Correctly interpreted $\mu$ as location and $\sigma$ as spread for the normal distribution.
+- Correctly predicted how changing $\mu$ shifts a normal distribution and changing $\sigma$ changes its width.
+- Calculated and interpreted $z$-scores as distance from the mean in standard-deviation units.
+- Used $z$-scores to compare relative performance across differently scaled measurements.
+- Simulated 10,000 fair die rolls with NumPy.
+- Built a cumulative running mean and showed its movement toward the expected value $3.5$.
+- Correctly explained that convergence under the law of large numbers does not imply monotonic movement or that fluctuations eventually stop completely.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Expectation wording | Refined expectation from a likely/typical value to the probability-weighted long-run average | Expected value versus mode/typical outcome | Corrected |
+| Variance definition | Tightened “how far values lie from the expected value” to expected squared deviation | Informal versus formal definition | Corrected |
+| LLN interpretation | Reinforced that the running mean need not get closer after every additional sample | Convergence was at risk of being interpreted as monotonic | Secure |
+| Session pacing | The material was recognised as already largely familiar; future probability/statistics work was redirected into ML applications rather than extending basic standalone exercises | Lesson pacing had become too slow/basic | Planning rule updated |
+
+### Strengths demonstrated
+
+- Normal-distribution concepts were understood quickly without repeated practice.
+- $z$-scores were interpreted correctly and transferred to cross-context comparison.
+- The running-mean simulation was implemented successfully.
+- LLN behaviour was described accurately from the plot.
+- The learner explicitly identified that the material was becoming too basic, leading to the correct decision to accelerate toward applied ML.
+
+### Weak points and recurring issues
+
+1. Formal definitions such as expectation and variance need precise wording even when the intuition is already strong.
+2. Avoid over-practising familiar probability/statistics concepts once retrieval demonstrates they are secure.
+3. Future covariance/correlation and likelihood material should be introduced where it is useful for ML rather than as isolated beginner statistics.
+
+### Diagnostic outcome
+
+**I can already:** interpret normal distributions, use $z$-scores, explain expectation/variance/standard deviation, and explain the law of large numbers through simulation.
+
+**I need to refresh:** formal wording of expectation and variance during later retrieval.
+
+**I cannot yet:** claim experience with likelihood/MLE in an ML model; that is the next bridge.
+
+### Reproduction status
+
+- Normal distribution interpretation: Yes.
+- $z$-score calculation and interpretation: Yes.
+- Running-mean simulation: Yes.
+- Law of large numbers explanation: Yes.
+- Plotting running mean: Likely; Matplotlib syntax may require reference.
+
+### Session reflection
+
+**Most important thing learned:**  
+The law of large numbers explains why sample averages stabilise around the expected value as sample size grows, without requiring every successive estimate to move closer.
+
+**Recurring error or misconception:**  
+No major conceptual weakness; the larger issue was session pacing becoming too basic relative to demonstrated understanding.
+
+**First task next:**  
+Move directly into Gaussian Naive Bayes so probability density, likelihood and MLE are learned in an applied classification context.
+
+---
+
+## Entry 020 — Gaussian Naive Bayes from Scratch
+
+**Date:** 2–3 September 2026  
+**Plan stage:** Transition from probability/statistics into classical machine learning  
+**Status:** Completed after substantial implementation and review; classifier reproduced scikit-learn predictions  
+**Overall confidence:** Green
+
+### Tasks
+
+Build Gaussian Naive Bayes from first principles by:
+
+1. introducing continuous probability density;
+2. distinguishing probability from likelihood;
+3. introducing maximum-likelihood estimation for Gaussian parameters;
+4. estimating class priors, per-class feature means and MLE variances from Iris training data;
+5. introducing the conditional-independence (“naive”) assumption;
+6. combining class priors and Gaussian feature densities into class scores;
+7. converting products into log scores for numerical stability;
+8. implementing the Gaussian log-density directly;
+9. predicting the full held-out test set;
+10. comparing the implementation with `sklearn.naive_bayes.GaussianNB`; and
+11. performing a small error analysis.
+
+### Independent work completed
+
+- Implemented the Gaussian probability-density function directly from the mathematical formula.
+- Correctly interpreted density as compatibility of a continuous feature value with a class-specific distribution rather than as a point probability.
+- Understood likelihood as the same probabilistic model viewed with observed data fixed and parameters varied.
+- Correctly explained MLE as choosing parameter values that make the observed training data most plausible.
+- Used Gaussian MLE estimates:
+  - $\hat\mu = \frac{1}{n}\sum_i x_i$;
+  - $\hat\sigma^2 = \frac{1}{n}\sum_i(x_i-\hat\mu)^2$.
+- Predicted parameter-array shapes before implementation:
+  - priors `(3,)`;
+  - means `(3, 4)`;
+  - variances `(3, 4)`.
+- Estimated all class priors, means and variances from `X_train` / `y_train`.
+- Correctly understood why conditional independence permits the joint density to factorise into a product of class-conditional feature densities.
+- Implemented one-observation classification using repeated multiplication of feature densities.
+- Implemented log-score classification using sums of log densities.
+- Implemented a direct Gaussian log-density function to avoid underflow in the Gaussian exponential itself.
+- Extended the classifier to all 30 Iris test observations and achieved 29/30 correct predictions (96.7% accuracy).
+- Compared the manual implementation with scikit-learn; all 30 predictions agreed.
+- Inspected the single error and compared feature-level log-density contributions.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Probability density | A retrieval question incorrectly assumed the unseen density-versus-probability distinction; this was recognised as an AI lesson-planning error and the concept was then taught explicitly | New concept had been tested before teaching | Lesson rule corrected |
+| Gaussian formula coding | Identified missing denominator parentheses in the exponent | Operator precedence / transcription | Corrected |
+| Likelihood/MLE | Explained fixed-data/varying-parameter viewpoint and Gaussian MLE interpretation | New concept | Understood |
+| Class labels vs array indices | Explained `enumerate(classes)` so parameter-array positions do not rely on labels being `0,1,2` | Generalisation issue | Understood |
+| Log-score task | The task initially implied `log(gaussian_density(...))` was the full numerical-stability solution; later clarification distinguished product underflow from individual-density underflow | Hidden requirement / AI task-design error | Explicitly corrected |
+| Direct log-density | Derived the algebraically simplified log-density so the exponential need not be evaluated | Numerical stability | Understood and implemented |
+| True-label check | Corrected accidental comparison with `y_train[0]` instead of `y_test[0]` for a test observation | Dataset bookkeeping | Corrected |
+| scikit-learn variance comparison | Clarified that `GaussianNB` variances are numerically equivalent but can include a tiny smoothing adjustment | Library implementation detail | Understood |
+| Error-analysis interpretation | Converted log-score differences into relative score ratios and clarified that raw log scores are not themselves normalised confidence probabilities | Log-score interpretation | Corrected |
+| Feature contributions | Clarified that the relevant comparison is the class-2 minus class-1 log-density difference for each feature; zero has no special meaning for log density | Relative evidence | Corrected |
+| Session scope | Too many follow-on tasks were appended and a correlation exercise added little value after the conditional-independence issue was already understood | AI lesson-planning failure | Formal lesson-planning guardrails created |
+
+### Strengths demonstrated
+
+- The classifier was built from mathematics rather than copied from scikit-learn.
+- The learner independently chose multiplication assignment for the joint density, directly matching the product formula.
+- Parameter shapes and axis choices were correct.
+- Likelihood and MLE were understood in the context of an actual model.
+- Conditional independence was linked to the probability chain rule rather than accepted as a magic factorisation.
+- Numerical underflow was understood at both the product and individual-density levels.
+- The from-scratch classifier reproduced scikit-learn predictions exactly on the test split.
+- Error analysis moved beyond accuracy to inspect the model's comparative evidence for competing classes.
+
+### Weak points and recurring issues
+
+1. New concepts must never appear in retrieval before being taught.
+2. Implementation prompts must not hide an unstated “better” numerical method and later treat it as an error.
+3. Avoid over-detailed hints; the learner should receive the goal and expected output, not an implementation scaffold.
+4. Keep class labels distinct from parameter-array indices.
+5. Raw log scores preserve ordering but are not automatically posterior probabilities or confidence values.
+6. Session scope must be fixed in advance; useful follow-on analysis should not automatically become another required task.
+
+### Diagnostic outcome
+
+**I can already:** explain probability density, likelihood and Gaussian MLE; train the probabilistic components of Gaussian Naive Bayes; explain the naive conditional-independence factorisation; implement stable log-score prediction; and verify a from-scratch classifier against scikit-learn.
+
+**I need to refresh:** the exact direct Gaussian log-density formula, the distinction between log scores and normalised posterior probabilities, and label-versus-index handling.
+
+**I cannot yet:** claim a complete reliable ML evaluation workflow; the next priority is baselines, cross-validation and leak-free model selection.
+
+### Reproduction status
+
+- Gaussian density: Yes.
+- Probability density versus point probability: Yes.
+- Likelihood / MLE intuition: Yes.
+- Gaussian MLE mean and variance: Yes.
+- Class-prior estimation: Yes.
+- Conditional-independence factorisation: Yes.
+- Log-score classifier: Yes.
+- Direct Gaussian log-density: Likely; retrieve later.
+- Full-test prediction loop: Yes.
+- scikit-learn GaussianNB comparison: Likely; API syntax may need reference.
+
+### Session reflection
+
+**Most important thing learned:**  
+Gaussian Naive Bayes turns Bayes' theorem into a practical classifier by fitting one Gaussian per feature per class and using the conditional-independence assumption to combine feature evidence efficiently.
+
+**Recurring error or misconception:**  
+The learner's main difficulties were not with the classifier itself; the major failures were in AI lesson design, including testing unseen material, over-revealing hints, hidden requirements and uncontrolled session scope.
+
+**First task next:**  
+Build a reliable model-evaluation workflow with a dummy baseline, cross-validation on training data only and one untouched final test evaluation.
+
+---
+
+## Entry 021 — Baselines and Cross-Validation
+
+**Date:** 4–5 September 2026  
+**Plan stage:** Classical machine learning — reliable evaluation workflow  
+**Status:** Completed; model selection and held-out test discipline secure  
+**Overall confidence:** Green
+
+### Tasks
+
+Build a defensible model-evaluation workflow by:
+
+1. introducing dummy baselines;
+2. distinguishing training, validation and final test roles;
+3. introducing 5-fold cross-validation;
+4. using Breast Cancer Wisconsin data with an 80/20 stratified holdout;
+5. comparing `DummyClassifier(strategy='most_frequent')` with GaussianNB using 5-fold CV on training data only;
+6. selecting the model from CV evidence;
+7. refitting the selected model on the full training set; and
+8. evaluating it once on the untouched test set.
+
+### Independent work completed
+
+- Correctly explained why the final test set must not influence model choice.
+- Correctly explained that a dummy baseline measures performance available without learning useful feature-target relationships.
+- Understood that in 5-fold CV each training observation is used once for validation and four times for fitting.
+- Loaded Breast Cancer Wisconsin data and created a stratified 80/20 train/test split.
+- Calculated class proportions for the full, training and test sets.
+- Evaluated a most-frequent dummy classifier and GaussianNB with `cross_val_score`.
+- Obtained:
+  - Dummy CV mean $\approx0.626$, std $\approx0.000$;
+  - GaussianNB CV mean $\approx0.936$, std $\approx0.004$.
+- Selected GaussianNB using CV results only.
+- Refit GaussianNB on the whole training set.
+- Evaluated once on the held-out test set and obtained accuracy $\approx0.939$.
+- Correctly linked the dummy score to the majority-class proportion.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Dummy baseline | Corrected an initial interpretation that focused on low fold-to-fold spread rather than the baseline's main purpose | Baseline purpose | Corrected |
+| Test-set model selection | Clarified that using test performance to choose among models contaminates the final evaluation even if model parameters were not fitted on the test set | Model-selection leakage | Corrected |
+| CV observation roles | Clarified that CV fits five temporary model instances and each observation is validation once / fitting four times | Cross-validation mechanics | Corrected |
+| CV standard deviation | Corrected “similar test accuracy was expected because CV std was low”; low CV std describes consistency across folds but does not guarantee a similar independent test score | Interpretation of CV variability | Corrected |
+| Final refit wording | Replaced “inclusion of all five folds” with refitting the selected model on the entire training set | CV versus final training terminology | Corrected |
+
+### Strengths demonstrated
+
+- The train/validation/test distinction was understood conceptually rather than treated as library procedure.
+- Model choice was made without consulting the final test score.
+- Baseline performance was interpreted relative to class imbalance.
+- Cross-validation mean and spread were reported and interpreted.
+- The final test result was treated as a single independent evaluation after selection.
+
+### Weak points and recurring issues
+
+1. A dummy baseline is primarily a performance reference, not a measure of fold stability.
+2. Test-set contamination can occur through model-selection decisions even without fitting parameters on test observations.
+3. Low CV standard deviation does not guarantee a particular held-out test score.
+4. Keep temporary CV models separate conceptually from the final model refitted on all training data.
+
+### Diagnostic outcome
+
+**I can already:** explain baselines, 5-fold cross-validation, model-selection leakage and the role of an untouched test set; implement CV-based model selection and one final held-out evaluation.
+
+**I need to refresh:** the interpretation of CV spread and the exact distinction between validation during CV and the final refitted model.
+
+**I cannot yet:** guarantee preprocessing is leak-free inside CV; pipelines are the next priority.
+
+### Reproduction status
+
+- Stratified train/test split: Yes.
+- Dummy baseline interpretation: Yes.
+- `cross_val_score` workflow: Likely; API syntax may need reference.
+- CV mean / std interpretation: Yes after correction.
+- Model selection without test leakage: Yes.
+- Final refit + test evaluation: Yes.
+
+### Session reflection
+
+**Most important thing learned:**  
+Cross-validation provides model-selection evidence using the training data while preserving the held-out test set as an independent final evaluation.
+
+**Recurring error or misconception:**  
+The main conceptual correction was that the test set can be contaminated through decisions, not only through explicit parameter fitting.
+
+**First task next:**  
+Introduce k-nearest neighbours and use a scikit-learn pipeline to show why preprocessing must be fitted inside each CV fold.
+
+---
+
+## Entry 022 — Leak-Free Pipelines and k-Nearest Neighbours
+
+**Date:** 7 September 2026  
+**Plan stage:** Classical machine learning — preprocessing and pipelines  
+**Status:** Completed; leak-free preprocessing workflow secure  
+**Overall confidence:** Green
+
+### Tasks
+
+Use k-nearest neighbours to connect feature scaling with leak-free preprocessing by:
+
+1. introducing k-NN classification and Euclidean-distance intuition;
+2. explaining why numerical feature scale matters for distance-based models;
+3. revisiting standardisation as $z=(x-\mu)/\sigma$;
+4. introducing preprocessing leakage inside cross-validation;
+5. introducing scikit-learn `Pipeline`;
+6. comparing unscaled and scaled 5-NN using 5-fold CV; and
+7. selecting and evaluating the better approach on the untouched test set.
+
+### Independent work completed
+
+- Correctly transferred prior scaling knowledge to the problem of distance-based classification.
+- Explained that large-scale features can dominate Euclidean distance because of their numerical units.
+- Understood the k-NN mechanism: classify an unseen observation using the labels of its nearest training observations.
+- Correctly explained why fitting a scaler on all of `X_train` before CV leaks information from validation folds.
+- Built a pipeline containing `StandardScaler()` and `KNeighborsClassifier(n_neighbors=5)`.
+- Correctly passed the whole pipeline to `cross_val_score`, ensuring fold-specific scaler fitting.
+- Compared:
+  - raw 5-NN CV mean $\approx0.936$, std $\approx0.019$;
+  - scaled 5-NN CV mean $\approx0.967$, std $\approx0.021$.
+- Selected the scaled pipeline using CV evidence only.
+- Refit it on the full training set and obtained final test accuracy $\approx0.956$.
+- Correctly interpreted the improved CV result as evidence that scaling materially improved neighbour selection on this dataset.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Distance/scaling retrieval | Refined “smaller feature has less variance” to “larger numerical scale contributes more to the distance calculation” | Variance versus distance contribution | Corrected |
+| GaussianNB comparison | Confirmed that GaussianNB uses each feature's own fitted mean/variance, so unit scale does not dominate it in the same way as raw Euclidean k-NN | Transfer across models | Understood |
+| Pipeline semantics | Clarified that the scaler is **fitted** only on the four fitting folds, then used to **transform both fitting and validation folds** | Fit versus transform distinction | Corrected |
+| Interpretation wording | Softened “scaling should make classification more accurate” to “can lead to more appropriate neighbour selection and improved performance” | Empirical result versus universal claim | Corrected |
+
+### Strengths demonstrated
+
+- The need for scaling was predicted from the geometry of the algorithm before examining results.
+- The learner independently constructed the correct scikit-learn pipeline.
+- Leakage prevention was understood as a data-flow issue, not just an API convention.
+- The distinction between fitting preprocessing parameters and applying them to unseen data was explicitly clarified.
+- Model comparison remained confined to training-set CV before final test evaluation.
+
+### Weak points and recurring issues
+
+1. Keep “fit” and “transform” separate: validation/test data are transformed but must not determine preprocessing parameters.
+2. Avoid using “variance” when the intended issue is raw numerical contribution to a distance metric.
+3. Scaling can help distance-based models but improvement is empirical, not guaranteed.
+
+### Diagnostic outcome
+
+**I can already:** explain k-NN, explain why scale matters for Euclidean distance, build a scaler+classifier pipeline, and explain how pipelines prevent preprocessing leakage inside cross-validation.
+
+**I need to refresh:** the exact fold-level sequence of scaler fitting and transformation.
+
+**I cannot yet:** describe model performance adequately when different types of classification error have different consequences; classification metrics are next.
+
+### Reproduction status
+
+- k-NN intuition: Yes.
+- Euclidean-distance scaling issue: Yes.
+- Standardisation interpretation: Yes.
+- Pipeline construction: Likely; exact sklearn syntax may need reference.
+- Leak-free CV preprocessing: Yes.
+- Scaled versus unscaled CV comparison: Yes.
+
+### Session reflection
+
+**Most important thing learned:**  
+Preprocessing steps that learn parameters are part of the model-fitting process and therefore must be fitted inside each cross-validation fold; a pipeline enforces this automatically.
+
+**Recurring error or misconception:**  
+The only substantive conceptual refinement was distinguishing “fit the scaler on fitting folds” from “transform validation data with that fitted scaler.”
+
+**First task next:**  
+Move beyond accuracy by learning confusion matrices, precision, recall/sensitivity, specificity and F1.
+
+---
+
+## Entry 023 — Classification Metrics and Out-of-Fold Predictions
+
+**Date:** 7 September 2026  
+**Plan stage:** Classical machine learning — evaluation metrics  
+**Status:** Completed; binary error-type interpretation secure  
+**Overall confidence:** Green
+
+### Tasks
+
+Extend model evaluation beyond accuracy by:
+
+1. introducing TP, TN, FP and FN;
+2. defining malignant tumours as the positive condition even though the dataset encodes malignant as label `0`;
+3. introducing precision, recall/sensitivity, specificity and F1;
+4. introducing out-of-fold predictions;
+5. generating 5-fold OOF predictions for the scaled 5-NN pipeline;
+6. constructing and interpreting the confusion matrix;
+7. calculating the five metrics manually; and
+8. selecting a primary metric based on asymmetric error costs.
+
+### Independent work completed
+
+- Correctly reasoned that high recall corresponds to few false negatives and lower precision corresponds to more false positives.
+- Correctly prioritised sensitivity/recall when false negatives are assumed substantially more harmful than false positives.
+- Understood out-of-fold predictions as one prediction per training observation from a temporary model that was not fitted on that observation.
+- Correctly handled the non-default positive-class convention:
+  - label `0` = malignant = positive;
+  - label `1` = benign = negative.
+- Constructed the confusion matrix with label order `[0, 1]`.
+- Correctly extracted:
+  - $TP=160$;
+  - $FN=10$;
+  - $FP=5$;
+  - $TN=280$.
+- Manually calculated:
+  - accuracy $\approx0.967$;
+  - precision $\approx0.970$;
+  - recall/sensitivity $\approx0.941$;
+  - specificity $\approx0.982$;
+  - F1 $\approx0.955$.
+- Correctly identified 10 missed malignant cases and 5 benign cases falsely flagged malignant.
+- Correctly selected recall as the primary metric under the stated hypothetical cost assumption.
+
+### Material AI interventions
+
+| Area | Help received | Underlying issue | Current status |
+|---|---|---|---|
+| Positive-class encoding | Explained that “positive” is a semantic choice and need not be numerical label `1` | Label encoding versus evaluation semantics | Understood |
+| Confusion-matrix orientation | Clarified scikit-learn rows=true labels, columns=predicted labels and the resulting `[[TP, FN],[FP, TN]]` layout for labels `[0,1]` when `0` is positive | Matrix orientation | Secure |
+| `np.count_nonzero` check | Explained that `np.count_nonzero(predictions)` counts numerical `1`s, not semantically positive predictions; here that counted predicted benign/negative cases | Numerical encoding versus semantic positive class | Corrected |
+| Accuracy interpretation | Corrected the claim that accuracy alone was sufficient because it happened to be close to F1 | Metric values versus information content | Corrected |
+| Recall wording | Corrected “recall measures the false-negative rate”; recall measures detected positives, while $\mathrm{FNR}=1-\mathrm{Recall}$ | Recall versus false-negative rate | Corrected |
+
+### Strengths demonstrated
+
+- Error types were interpreted in terms of their real-world consequences rather than memorised labels.
+- The learner handled a positive class encoded as `0`, avoiding the common assumption that positive always means label `1`.
+- Metrics were calculated manually from the confusion matrix, reinforcing their definitions.
+- Out-of-fold predictions were correctly understood as a way to obtain per-observation validation predictions without touching the held-out test set.
+- Metric choice was justified from the asymmetric cost of false negatives and false positives.
+
+### Weak points and recurring issues
+
+1. Semantic “positive” and numerical value `1` must remain separate concepts.
+2. Accuracy can be numerically similar to F1 while still failing to describe the kinds of errors made.
+3. Recall is not the false-negative rate; $\mathrm{FNR}=1-\mathrm{Recall}$.
+4. When checking class counts programmatically, compare labels explicitly rather than relying on truthiness/non-zero values.
+
+### Diagnostic outcome
+
+**I can already:** interpret confusion matrices, distinguish TP/TN/FP/FN, calculate and explain accuracy/precision/recall/specificity/F1, use out-of-fold predictions, and choose a primary metric based on error consequences.
+
+**I need to refresh:** recall versus false-negative rate and confusion-matrix orientation when the positive class is encoded unusually.
+
+**I cannot yet:** explain logistic regression, regularisation and the bias-variance trade-off at the level required for the remaining classical-ML block.
+
+### Reproduction status
+
+- TP / TN / FP / FN: Yes.
+- Precision: Yes.
+- Recall / sensitivity: Yes.
+- Specificity: Yes.
+- F1: Yes.
+- Out-of-fold prediction concept: Yes.
+- Manual metric calculation: Yes.
+- Positive-label handling: Yes after clarification.
+
+### Session reflection
+
+**Most important thing learned:**  
+A single accuracy value can hide clinically important differences between false positives and false negatives; evaluation metrics must be chosen according to the consequences of the errors.
+
+**Recurring error or misconception:**  
+The main remaining risk is allowing numerical class encoding to dictate the semantic meaning of “positive,” and confusing recall with the complementary false-negative rate.
+
+**First task next:**  
+Introduce logistic regression and regularisation, using the existing pipeline/CV/metrics workflow without adding unrelated evaluation machinery.
+
